@@ -47,7 +47,7 @@ def add_vars_to_workspace(_ws=None,_dataVars=None):
     elif var == "dZ":
       _vars[var] = ROOT.RooRealVar(var,var,0.,-20.,20.)
       _vars[var].setBins(40)
-    elif var == "weight":
+    elif var == "eventWeight":
       _vars[var] = ROOT.RooRealVar(var,var,0.)
     else:
       _vars[var] = ROOT.RooRealVar(var,var,1.,-999999,999999)
@@ -74,6 +74,7 @@ if opt.inputConfig != '':
     inputTreeDir     = _cfg['inputTreeDir']
     dataVars         = _cfg['dataVars']
     cats             = _cfg['cats']
+  #  listOfTreeNames  = _cfg['listOfTreeNames']
 
   else:
     print("[ERROR] %s config file does not exist. Leaving..."%opt.inputConfig)
@@ -85,7 +86,7 @@ else:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # UPROOT file
 f = uproot.open(opt.inputTreeFile)
-if inputTreeDir == '': listOfTreeNames == f.keys()
+if inputTreeDir == '': listOfTreeNames = f.keys()
 else: listOfTreeNames = f[inputTreeDir].keys()
 # If cats = 'auto' then determine from list of trees
 if cats == 'auto':
@@ -118,14 +119,16 @@ aset = make_argset(ws,varNames)
 
 # Loop over categories and 
 for cat in cats:
+  
   print(" --> Extracting events from category: %s"%cat)
-  if inputTreeDir == '': treeName = "Data_%s_%s"%(sqrts__,cat)
-  else: treeName = "%s/Data_%s_%s"%(inputTreeDir,sqrts__,cat)
+ # if inputTreeDir == '': treeName = "Data_%s_%s"%(sqrts__,cat)
+ # else: treeName = "%s/Data_%s_%s"%(inputTreeDir,sqrts__,cat)
+  treeName = "gghh_125_13p6TeV_%s"%(cat) ## this should be changed.
   print("    * tree: %s"%treeName)
   t = f.Get(treeName)
-
+  sqrts_temp = '13p6TeV'
   # Define dataset for cat
-  dname = "Data_%s_%s"%(sqrts__,cat)  
+  dname = "Data_%s_%s"%(sqrts_temp,cat)  
   d = ROOT.RooDataSet(dname,dname,aset,'weight')
 
   # Loop over events in tree and add to dataset with weight 1

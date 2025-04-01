@@ -23,6 +23,13 @@ globalReplacementMap["example"]["catRVMap"] = od()
 globalReplacementMap["example"]["catRVMap"]["Untagged_Tag0"] = "Untagged_Tag0"
 globalReplacementMap["example"]["catRVMap"]["VBF_Tag0"] = "VBF_Tag0"
 
+
+
+globalReplacementMap['0310'] = od()
+#test bbgg analysis
+globalReplacementMap['0310']['proc'] = "GG2HH"
+globalReplacementMap['0310']['cat'] = "ntuple"
+
 # Tutorial analysis
 globalReplacementMap['tutorial'] = od()
 # For WRONG VERTEX SCENARIO:

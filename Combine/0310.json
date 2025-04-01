@@ -1,0 +1,8 @@
+{
+    "mu_inclusive":{
+        "pois":"r",
+        "fits":"bestfit:syst:r",
+        "points":"1",
+        "fit_opts":"--saveWorkspace --setParameterRanges r=0,3 --saveSpecifiedNuis all --freezeParameters MH --saveSpecifiedIndex pdfindex_cat0_2022_13TeV,pdfindex_cat1_2022_13TeV,pdfindex_cat2_2022_13TeV,pdfindex_cat3_2022_13TeV "
+    }
+}

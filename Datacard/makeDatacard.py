@@ -20,7 +20,7 @@ def get_options():
   parser.add_option('--pruneThreshold', dest='pruneThreshold', default=0.001, type='float', help="Threshold with which to prune proc x cat as fraction of total category yield (default=0.1%)")
   parser.add_option('--doTrueYield', dest='doTrueYield', default=False, action="store_true", help="For pruning: use true number of expected events for proc x cat i.e. Product(XS,BR,eff*acc,lumi). If false then will just use sum of weights (= eff x acc)")
   parser.add_option('--mass', dest='mass', default='125', help="MH mass: required for doTrueYield")
-  parser.add_option('--analysis', dest='analysis', default='tutorial', help="Analysis extension: required for doTrueYield (see ./tools/XSBR.py for example)")
+  parser.add_option('--analysis', dest='analysis', default='0310', help="Analysis extension: required for doTrueYield (see ./tools/XSBR.py for example)")
   # For yield/systematics:
   parser.add_option('--skipCOWCorr', dest='skipCOWCorr', default=False, action="store_true", help="Skip centralObjectWeight correction for events in acceptance")
   parser.add_option('--doSystematics', dest='doSystematics', default=False, action="store_true", help="Include systematics calculations and add to datacard")
@@ -71,6 +71,9 @@ if opt.doSystematics:
       if s['name'] == 'JetHEM': experimentalFactoryType[s['name']] = "a_h"
       else: 
         experimentalFactoryType[s['name']] = factoryType(data[mask],s)
+    if s['type'] == 'constant':
+        experimentalFactoryType[s['name']] = factoryType(data[mask],s)
+  print("done exp_sys")
   for s in theory_systematics:
     if s['type'] == 'factory': 
       theoryFactoryType[s['name']] = factoryType(data[mask],s)
@@ -100,6 +103,7 @@ if opt.prune:
   print(" ..........................................................................................")
   print(" --> Pruning processes which contribute < %.2f%% of RECO category yield"%(100*opt.pruneThreshold))
   data['prune'] = 0
+  print("data-----------",data)
   if opt.doTrueYield:
     print(" --> Using the true yield of process for pruning: N = Product(XS,BR,eff*acc,lumi)")
     mask = (data['type']=='sig')
@@ -107,6 +111,8 @@ if opt.prune:
     # Extract XS*BR using tools.XSBR
     data['xsbr'] = '-'
     from tools.XSBR import *
+    print("check-114-----------",opt.analysis)
+    print(data)
     XSBR = extractXSBR(data,mass=opt.mass,analysis=opt.analysis)
     data.loc[mask,'xsbr'] = data[mask].apply(lambda x: XSBR["XS_%s"%x['procOriginal']]*XSBR['BR'], axis=1)
 

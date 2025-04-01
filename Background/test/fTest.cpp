@@ -597,7 +597,7 @@ int main(int argc, char* argv[]){
   extraText  = "Preliminary";  // default extra text is "Preliminary"
   lumi_8TeV  = "19.1 fb^{-1}"; // default is "19.7 fb^{-1}"
   lumi_7TeV  = "4.9 fb^{-1}";  // default is "5.1 fb^{-1}"
-  lumi_sqrtS = "13 TeV";       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
+  lumi_sqrtS = "13.6 TeV";       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
   string year_ = "2016";
   //int year_ = 2017;
 
@@ -742,7 +742,7 @@ int main(int argc, char* argv[]){
 
 	std::string ext = is2011 ? "7TeV" : "8TeV";
         if( isFlashgg_ ){
-          if( year_ == "all" ){ ext = "13TeV"; }
+          if( year_ == "2022" ){ ext = "13.6TeV"; }
           //else{ ext = "13TeV"; } //FIXME 
           else{ ext = Form("%s_13TeV",year_.c_str()); }
         }
@@ -764,7 +764,7 @@ int main(int argc, char* argv[]){
 		RooDataSet *dataFull;
 		RooDataSet *dataFull0;
 		if (isData_) {
-    dataFull = (RooDataSet*)inWS->data(Form("Data_13TeV_%s",catname.c_str()));
+    dataFull = (RooDataSet*)inWS->data(Form("Data_13p6TeV_%s",catname.c_str()));
     /*dataFull= (RooDataSet*) dataFull0->emptyClone();
     for (int i =0 ; i < dataFull0->numEntries() ; i++){
     double m = dataFull0->get(i)->getRealValue("CMS_hgg_mass");
@@ -801,6 +801,7 @@ int main(int argc, char* argv[]){
 			thisdataBinned_name= Form("roohist_data_mass_cat%d",cat);
 			//RooDataSet *data = (RooDataSet*)dataFull;
 		}
+		std:: cout << "check---804:" << thisdataBinned_name.c_str()<< "__"<<dataFull<<"__"<< mass << std::endl;
 		RooDataHist thisdataBinned(thisdataBinned_name.c_str(),"data",*mass,*dataFull);
 		data = (RooDataSet*)&thisdataBinned;
 

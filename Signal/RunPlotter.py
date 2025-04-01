@@ -49,15 +49,16 @@ if opt.cats in ['all','wall']:
     citr += 1
 else:
   for cat in opt.cats.split(","):
-    f = "%s/outdir_%s/CMS-HGG_sigfit_%s_%s.root"%(swd__,opt.ext,opt.ext,cat)
-    inputFiles[cat] = f
-    if citr == 0:
-      w = ROOT.TFile(f).Get("wsig_13TeV")
-      xvar = w.var(opt.xvar.split(":")[0])
-      xvar.setPlotLabel(opt.xvar.split(":")[1])
-      xvar.setUnit(opt.xvar.split(":")[2])
-      alist = ROOT.RooArgList(xvar)
-    citr += 1
+    for year in opt.years.split(","):
+      f = "%s/outdir_%s/CMS-HGG_sigfit_%s_%s_%s.root"%(swd__,opt.ext,opt.ext,cat,year)
+      inputFiles[cat] = f
+      if citr == 0:
+        w = ROOT.TFile(f).Get("wsig_13TeV")
+        xvar = w.var(opt.xvar.split(":")[0])
+        xvar.setPlotLabel(opt.xvar.split(":")[1])
+        xvar.setUnit(opt.xvar.split(":")[2])
+        alist = ROOT.RooArgList(xvar)
+      citr += 1
 
 # Load cat S/S+B weights
 if opt.loadCatWeights != '':

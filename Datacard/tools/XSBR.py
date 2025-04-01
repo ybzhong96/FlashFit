@@ -21,6 +21,14 @@ XSBRMap = od()
 #XSBRMap['example']['GG2H'] = {'mode':'ggH'}
 #XSBRMap['example']['VBF'] = {'mode':'qqH'}
 #XSBRMap['example']['WH2HQQ'] = {'mode':'WH','factor':BR_W_qq}
+##for the bbgg test version
+XSBRMap['0310'] = od()
+
+#XSBRMap['testV_231024']['decay'] = {'mode':'hgg'}
+XSBRMap['0310']['decay'] = {'mode':'constant', 'factor':1.0}
+XSBRMap['0310']['GG2HH'] = {'mode':'constant', 'factor':1.0}
+#XSBRMap['testV_231024']['GG2HH'] = {'mode':'constant', 'factor':0.03413*2*0.582}
+
 
 # Tutorial analysis
 XSBRMap['tutorial'] = od()

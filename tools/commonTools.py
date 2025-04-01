@@ -18,12 +18,12 @@ def extractWSFileNames( _inputWSDir ):
   if not os.path.isdir(_inputWSDir):
     print(" --> [ERROR] No such directory (%s)")
     return False
-  return glob.glob("%s/output_*.root"%_inputWSDir)
+  return glob.glob("%s/*_output_*.root"%_inputWSDir)
 
 def extractListOfProcs( _listOfWSFileNames ):
   procs = []
   for fName in _listOfWSFileNames:
-    p = fName.split("pythia8_")[1].split(".root")[0]
+    p = fName.split("M125_")[1].split(".root")[0]
     if p not in procs: procs.append(p)
   return ",".join(procs)
 
@@ -74,11 +74,11 @@ def signalFromFileName(_fileName):
     else: d = "_ZToQQ"
   elif "GluGlu" in _fileName: p = "ggh"
   elif "VBF" in _fileName: p = "vbf"
-  elif "WH" in _fileName: p = "wh"
-  elif "ZH" in _fileName: p = "zh"
+#  elif "WH" in _fileName: p = "wh"
+  elif "VH" in _fileName: p = "vh"
   elif "ttH" in _fileName: p = "tth"
-  elif "THQ" in _fileName: p = "thq"
-  elif "THW" in _fileName: p = "thw"
+ # elif "THQ" in _fileName: p = "thq"
+  #elif "THW" in _fileName: p = "thw"
   elif "bbH" in _fileName: p = "bbh"
   else:
     print(" --> [ERROR]: cannot extract production mode from input file name. Please update tools.commonTools.signalFromFileName")
@@ -106,6 +106,8 @@ procToDataMap['THW'] = 'thw'
 procToDataMap['GG2HQQ'] = 'ggzh'
 procToDataMap['GG2HLL'] = 'ggzh'
 procToDataMap['GG2HNUNU'] = 'ggzh'
+procToDataMap['GG2HH'] = 'gghh'
+procToDataMap['VH'] = 'vh'
 def procToData( _proc ):
   k = _proc.split("_")[0]
   if k in procToDataMap: _proc = re.sub( k, procToDataMap[k], _proc )

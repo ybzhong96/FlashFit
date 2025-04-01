@@ -21,7 +21,7 @@ import HiggsAnalysis.CombinedLimit.PhysicsModel as models
 class dummy_options:
   def __init__(self):
     self.physModel = "HiggsAnalysis.CombinedLimit.PhysicsModel:floatingHiggsMass"
-    self.physOpt = ["higgsMassRange=90,250"]
+    self.physOpt = ["higgsMassRange=110,140"]
     self.bin = True
     self.fileName = "dummy.root"
     self.cexpr = False
@@ -61,7 +61,10 @@ def initialiseXSBR():
   xsbr['constant'] = []
   mh = 120.
   while( mh < 130.05 ):
-    for pm in productionModes: xsbr[pm].append(getXS(SM,MHVar,mh,pm))
+    for pm in productionModes: 
+       # print("-------------------------finalModel--65---------------------")
+       # print(pm, xsbr[pm])
+        xsbr[pm].append(getXS(SM,MHVar,mh,pm))
     xsbr[decayMode].append(getBR(SM,MHVar,mh,decayMode))
     xsbr['constant'].append(1.)
     mh += 0.1

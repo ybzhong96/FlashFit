@@ -32,6 +32,8 @@ def procToProcS0(p):
   elif "tHq" in p: return "thq"
   elif "tHW" in p: return "thw"
   elif "bbH" in p: return "bbh"
+  elif "GG2HH_2022_hgg" in p: return "gghh"
+  elif "singleH_2022" in p: return "singleH"
   else: 
     print(" --> [ERROR] proc s0 not realised for process %s. Leaving"%p)
     exit(0)
@@ -49,6 +51,7 @@ data = pd.DataFrame( columns=columns_data )
 for _func in rooiter(allNorms):
   _proc =  _func.GetName().split("_proc_")[-1]
   if "bkg_mass" in _proc: continue
+  print(_proc)
   _proc_s0 = procToProcS0(_proc)
   _cat = cat = (_func.GetName().split("_proc_")[0]).split("bin")[-1]
   _nominal_yield = _func.getVal()

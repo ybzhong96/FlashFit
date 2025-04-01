@@ -14,7 +14,7 @@ def get_options():
   parser.add_option('--inputConfig',dest='inputConfig', default="", help='Input config: specify list of variables/systematics/analysis categories')
   parser.add_option('--inputTreeFile',dest='inputTreeFile', default="./output_0.root", help='Input tree file')
   parser.add_option('--inputMass',dest='inputMass', default="125", help='Input mass')
-  parser.add_option('--productionMode',dest='productionMode', default="ggh", help='Production mode [ggh,vbf,wh,zh,tth,thq,ggzh,bbh]')
+  parser.add_option('--productionMode',dest='productionMode', default="gghh", help='Production mode [ggh,vbf,vh,tth,bbh]')
   parser.add_option('--year',dest='year', default="2016", help='Year')
   parser.add_option('--decayExt',dest='decayExt', default='', help='Decay extension')
   parser.add_option('--doNNLOPS',dest='doNNLOPS', default=False, action="store_true", help='Add NNLOPS weight variable: NNLOPSweight')
@@ -57,7 +57,9 @@ def add_vars_to_workspace(_ws=None,_data=None,_stxsVar=None):
     elif var == "dZ": 
       _vars[var] = ROOT.RooRealVar(var,var,0.,-20.,20.)
       _vars[var].setBins(40)
-    elif var == "weight": 
+   # elif var == "weight": 
+   #   _vars[var] = ROOT.RooRealVar(var,var,0.)
+    elif var == "eventWeight":
       _vars[var] = ROOT.RooRealVar(var,var,0.)
     else:
       _vars[var] = ROOT.RooRealVar(var,var,1.,-999999,999999)
@@ -85,6 +87,7 @@ if opt.inputConfig != '':
     _cfg = import_module(re.sub(".py","",opt.inputConfig)).trees2wsCfg
 
     #Extract options
+  #  listOfTreeNames  = _cfg['listOfTreeNames']
     inputTreeDir     = _cfg['inputTreeDir']
     mainVars         = _cfg['mainVars']
     stxsVar          = _cfg['stxsVar']
@@ -112,7 +115,7 @@ if opt.year == '2018': systematics.append("JetHEM")
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # UPROOT file
 f = uproot.open(opt.inputTreeFile)
-if inputTreeDir == '': listOfTreeNames == f.keys()
+if inputTreeDir == '': listOfTreeNames = f.keys()
 else: listOfTreeNames = f[inputTreeDir].keys()
 # If cats = 'auto' then determine from list of trees
 if cats == 'auto':
@@ -130,9 +133,10 @@ if opt.doSystematics: sdata = pandas.DataFrame()
 
 # Loop over categories: fill dataframe
 for cat in cats:
+  sqrts_temp='13p6TeV'
   print( " --> Extracting events from category: %s"%cat)
-  if inputTreeDir == '': treeName = "%s_%s_%s_%s"%(opt.productionMode,opt.inputMass,sqrts__,cat)
-  else: treeName = "%s/%s_%s_%s_%s"%(inputTreeDir,opt.productionMode,opt.inputMass,sqrts__,cat)
+  if inputTreeDir == '': treeName = "%s_%s_%s_%s"%(opt.productionMode,opt.inputMass,sqrts_temp,cat)
+  else: treeName = "%s/%s_%s_%s_%s"%(inputTreeDir,opt.productionMode,opt.inputMass,sqrts_temp,cat)
   print("    * tree: %s"%treeName)
   # Extract tree from uproot
   t = f[treeName]
@@ -238,6 +242,7 @@ for stxsId in data[stxsVar].unique():
     if opt.doSystematics: sdf = sdata
 
     # Define output workspace file
+    print("line243",opt.productionMode)
     outputWSDir = "/".join(opt.inputTreeFile.split("/")[:-1])+"/ws_%s"%dataToProc(opt.productionMode)
     if not os.path.exists(outputWSDir): os.system("mkdir %s"%outputWSDir)
     outputWSFile = outputWSDir+"/"+re.sub(".root","_%s.root"%dataToProc(opt.productionMode),opt.inputTreeFile.split("/")[-1])
@@ -263,13 +268,15 @@ for stxsId in data[stxsVar].unique():
 
     # Define RooDataSet
     dName = "%s_%s_%s_%s"%(opt.productionMode,opt.inputMass,sqrts__,cat)
-    d = ROOT.RooDataSet(dName,dName,aset,'weight') 
+    print("dname", dName)
+    print("aset",aset)
+    d = ROOT.RooDataSet(dName,dName,aset,'eventWeight') 
 
     # Loop over events in dataframe and add entry
     for row in df[mask][varNames].to_numpy():
       for i, val in enumerate(row):
         aset[i].setVal(val)
-      d.add(aset,aset.getRealValue("weight"))
+      d.add(aset,aset.getRealValue("eventWeight"))
 
     # Add to workspace
     getattr(ws,'import')(d)

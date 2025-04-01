@@ -68,10 +68,13 @@ def factoryType(d,s):
     ws = f.Get(inputWSName__)
     dataHistUp = "%s_%sUp01sigma"%(r.nominalDataName,s['name'])
     dataHistDown = "%s_%sDown01sigma"%(r.nominalDataName,s['name'])
-
     # Check if syst is var (i.e. weight) in workspace
-    if ws.allVars().selectByName("%s*"%(s['name'])).getSize():
-      nWeights = ws.allVars().selectByName("%s*"%(s['name'])).getSize()
+    # ws.Print("v")
+    # if ws.allVars().selectByName("%s*"%(s['name'])).getSize():
+    if ws.allVars().selectByName("CMS_hgg_mass").getSize():
+      nWeights = ws.allVars().selectByName("CMS_hgg_mass").getSize()
+      #nWeights = ws.allVars().selectByName("%s*"%(s['name'])).getSize()
+      print("nWeights",nWeights)
       ws.Delete()
       f.Close()
       if nWeights == 2: return "a_w"
@@ -271,6 +274,8 @@ def experimentalSystFactory(d,systs,ftype,options,_removal=False):
     f = ftype[s['name']]
     if s['correlateAcrossYears']:
       mask = (d['type']=='sig')&(~d['cat'].str.contains("NOTAG"))
+      print("mask",mask)
+      print("sname", s['name'])
       d.loc[mask,s['name']] = d[mask].apply(lambda x: compareYield(x,f,s['name']), axis=1)
     else:
       for year in options.years.split(","):
