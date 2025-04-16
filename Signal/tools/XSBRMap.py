@@ -30,15 +30,17 @@ globalXSBRMap['example']['THW'] = {'mode':'tHW'}
 
 ##for the bbgg test version
 globalXSBRMap['0310'] = od()
-globalXSBRMap['0310']['decay'] = {'mode':'constant', 'factor':1.0}
-#globalXSBRMap['0310']['GG2HH'] = {'mode':'constant', 'factor':0.03413*2*0.582}
-globalXSBRMap['0310']['GG2HH'] = {'mode':'constant', 'factor':1.0}
-#globalXSBRMap['0310']['VBF'] = {'mode':'constant', 'factor':4.075}
-#globalXSBRMap['0310']['GG2H'] = {'mode':'constant', 'factor':52.17}
-#globalXSBRMap['0310']['TTH'] = {'mode':'constant', 'factor':0.5688}
-#globalXSBRMap['0310']['VH'] = {'mode':'constant', 'factor':2.401}
-#globalXSBRMap['0310']['BBH'] = {'mode':'constant','factor':0.52}
-globalXSBRMap['0310']['SingleH'] = {'mode':'constant','factor':1.0}
+#globalXSBRMap['0310']['decay'] = {'mode':'hgg'}
+#globalXSBRMap['0310']['GG2HH'] = {'mode':'constant', 'factor':2*0.582} #
+globalXSBRMap['0310']['decay'] = {'mode':'constant'}
+globalXSBRMap['0310']['GG2HH'] = {'mode':'constant'} 
+globalXSBRMap['0310']['VBFH'] = {'mode':'constant'}
+globalXSBRMap['0310']['GG2H'] = {'mode':'constant'}
+globalXSBRMap['0310']['TTH'] = {'mode':'constant'}
+globalXSBRMap['0310']['VH'] = {'mode':'constant'}
+globalXSBRMap['0310']['BBH'] = {'mode':'constant'}
+
+#globalXSBRMap['0310']['SingleH'] = {'mode':'constant','factor':1.0}
 # For tutorial analysis: use 13.6 TeV cross sections and branching fraction
 # These are not yet stored in Combine, so we will use the constant-factor approach 
 # Setting the values at MH=125.38 GeV

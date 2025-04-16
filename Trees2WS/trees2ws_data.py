@@ -47,8 +47,8 @@ def add_vars_to_workspace(_ws=None,_dataVars=None):
     elif var == "dZ":
       _vars[var] = ROOT.RooRealVar(var,var,0.,-20.,20.)
       _vars[var].setBins(40)
-    elif var == "eventWeight":
-      _vars[var] = ROOT.RooRealVar(var,var,0.)
+  #  elif var == "weight":
+  #    _vars[var] = ROOT.RooRealVar(var,var,0.)
     else:
       _vars[var] = ROOT.RooRealVar(var,var,1.,-999999,999999)
       _vars[var].setBins(1)

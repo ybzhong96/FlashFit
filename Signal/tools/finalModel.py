@@ -32,11 +32,35 @@ class dummy_options:
 
 # Functions to get XS/BR
 def getXS(_SM,_MHVar,_mh,_pm):
-  _MHVar.setVal(_mh)
-  return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
+ # _MHVar.setVal(_mh)
+ # return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
+  if _pm == "ggHH":
+    return 1.0  
+    #return 0.03413
+  if _pm == "ggH":
+    return 52.23 # 13.6TeV, mH=125GeV, in pb
+  if _pm == "ttH":
+    return 0.57
+  if _pm == "qqH" or _pm == "vbfH":
+    return 4.078
+  if _pm == "vH":
+    return 2.401
+  if _pm == "bbH":
+    return 0.5266
+  else:
+    print(_pm)  
+    print("--> [ERROR] getXS input name are not correct")
+    #_MHVar.setVal(_mh)
+    #return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
+
+
+
 def getBR(_SM,_MHVar,_mh,_dm):
-  _MHVar.setVal(_mh)
-  return _SM.modelBuilder.out.function("SM_BR_%s"%_dm).getVal()
+  if _dm == "hgg": 
+    return 2.27E-03
+  else:
+    _MHVar.setVal(_mh)
+    return _SM.modelBuilder.out.function("SM_BR_%s"%_dm).getVal()
 
 # Function to initialise XS values from combine
 def initialiseXSBR():

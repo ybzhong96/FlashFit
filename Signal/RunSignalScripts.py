@@ -91,6 +91,11 @@ if options['procs'] == "auto":
   options['procs'] = extractListOfProcs(WSFileNames)
 options['nProcs'] = len(options['procs'].split(","))
 
+#print("***********************************************************************************")
+#print(options['procs']) GG2HH
+#print("******************************************************************************")
+#print(options['nProcs']) 1
+
 if options['cats'] == "auto":
   options['cats'] = extractListOfCats(WSFileNames)
 options['nCats'] = len(options['cats'].split(","))

@@ -73,7 +73,8 @@ def signalFromFileName(_fileName):
     elif "ZToNuNu" in _fileName: d = "_ZToNuNu"
     else: d = "_ZToQQ"
   elif "GluGlu" in _fileName: p = "ggh"
-  elif "VBF" in _fileName: p = "vbf"
+  #elif "VBF" in _fileName: p = "vbf"
+  elif "VBFH" in _fileName: p = "vbfh"
 #  elif "WH" in _fileName: p = "wh"
   elif "VH" in _fileName: p = "vh"
   elif "ttH" in _fileName: p = "tth"
@@ -94,18 +95,19 @@ def massFromFileName(_fileName):
 # Function for converting STXS process to production mode in dataset name
 procToDataMap = od()
 procToDataMap['GG2H'] = 'ggh'
-procToDataMap['VBF'] = 'vbf'
-procToDataMap['WH2HQQ'] = 'wh'
-procToDataMap['ZH2HQQ'] = 'zh'
-procToDataMap['QQ2HLNU'] = 'wh'
-procToDataMap['QQ2HLL'] = 'zh'
+procToDataMap['VBFH'] = 'vbfh'
+#procToDataMap['VBF'] = 'vbf'
+#procToDataMap['WH2HQQ'] = 'wh'
+#procToDataMap['ZH2HQQ'] = 'zh'
+#procToDataMap['QQ2HLNU'] = 'wh'
+#procToDataMap['QQ2HLL'] = 'zh'
 procToDataMap['TTH'] = 'tth'
 procToDataMap['BBH'] = 'bbh'
-procToDataMap['THQ'] = 'thq'
-procToDataMap['THW'] = 'thw'
-procToDataMap['GG2HQQ'] = 'ggzh'
-procToDataMap['GG2HLL'] = 'ggzh'
-procToDataMap['GG2HNUNU'] = 'ggzh'
+#procToDataMap['THQ'] = 'thq'
+#procToDataMap['THW'] = 'thw'
+#procToDataMap['GG2HQQ'] = 'ggzh'
+#procToDataMap['GG2HLL'] = 'ggzh'
+#procToDataMap['GG2HNUNU'] = 'ggzh'
 procToDataMap['GG2HH'] = 'gghh'
 procToDataMap['VH'] = 'vh'
 def procToData( _proc ):
@@ -121,19 +123,21 @@ def dataToProc( _d ):
 # Mapping of process to name in datacard
 procToDatacardNameMap = od()
 procToDatacardNameMap['GG2H'] = "ggH"
-procToDatacardNameMap['VBF'] = "qqH"
-procToDatacardNameMap['WH2HQQ'] = "WH_had"
-procToDatacardNameMap["ZH2HQQ"] = "ZH_had"
-procToDatacardNameMap["QQ2HLNU"] = "WH_lep"
-procToDatacardNameMap["QQ2HLL"] = "ZH_lep"
+#procToDatacardNameMap['VBF'] = "qqH"
+#procToDatacardNameMap['WH2HQQ'] = "WH_had"
+#procToDatacardNameMap["ZH2HQQ"] = "ZH_had"
+#procToDatacardNameMap["QQ2HLNU"] = "WH_lep"
+#procToDatacardNameMap["QQ2HLL"] = "ZH_lep"
 procToDatacardNameMap["TTH"] = "ttH"
 procToDatacardNameMap["BBH"] = "bbH"
-procToDatacardNameMap["THQ"] = "tHq"
-procToDatacardNameMap["THW"] = "tHW"
-procToDatacardNameMap["TH"] = "tHq"
-procToDatacardNameMap["GG2HQQ"] = "ggZH_had"
-procToDatacardNameMap["GG2HLL"] = "ggZH_ll"
-procToDatacardNameMap["GG2HNUNU"] = "ggZH_nunu"
+procToDatacardNameMap["VH"] = "vH"
+procToDatacardNameMap["VBFH"] = "vbfH"
+#procToDatacardNameMap["THQ"] = "tHq"
+#procToDatacardNameMap["THW"] = "tHW"
+#procToDatacardNameMap["TH"] = "tHq"
+#procToDatacardNameMap["GG2HQQ"] = "ggZH_had"
+#procToDatacardNameMap["GG2HLL"] = "ggZH_ll"
+#procToDatacardNameMap["GG2HNUNU"] = "ggZH_nunu"
 
 def procToDatacardName( _proc ):
   k = _proc.split("_")[0]

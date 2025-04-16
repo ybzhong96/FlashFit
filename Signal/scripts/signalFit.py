@@ -75,6 +75,8 @@ print(" --> Running fit for (proc,cat) = (%s,%s)"%(opt.proc,opt.cat))
 if( len(opt.massPoints.split(",")) == 1 )&( opt.MHPolyOrder > 0 ):
   print(" --> [WARNING] Attempting to fit polynomials of O(MH^%g) for single mass point. Setting order to 0"%opt.MHPolyOrder)
   opt.MHPolyOrder=0
+print("---------------------Line 78-------------------------")
+print(opt.MHPolyOrder)
 
 # Add stopwatch function
 
@@ -122,6 +124,8 @@ if opt.skipZeroes:
  
 # Define proc x cat with which to extract shape: if skipVertexScenarioSplit label all events as "RV"
 procRVFit, catRVFit = opt.proc, opt.cat
+print("********************************************************************")
+print(opt.proc)
 if opt.skipVertexScenarioSplit: 
   print(" --> Skipping vertex scenario split")
 else:
@@ -284,6 +288,8 @@ if opt.doVoigtian:
 # FIT: simultaneous signal fit (ssf)
 ssfMap = od()
 name = "Total" if opt.skipVertexScenarioSplit else "RV"
+print("-----------------------------------------line 291-------------------------------------")
+print(opt.massPoints , opt.MHPolyOrder)
 ssfRV = SimultaneousFit(name,opt.proc,opt.cat,datasetRVForFit,xvar.Clone(),MH,MHLow,MHHigh,opt.massPoints,opt.nBins,opt.MHPolyOrder,opt.minimizerMethod,opt.minimizerTolerance)
 if opt.useDCB: ssfRV.buildDCBplusGaussian()
 else: ssfRV.buildNGaussians(nRV)
