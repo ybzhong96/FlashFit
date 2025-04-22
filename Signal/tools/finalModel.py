@@ -234,7 +234,8 @@ class FinalModel:
 
           # If corr/global nor in sType then build separate nuisance per year i.e. de-correlate
           if('Corr' in sType)|('Global' in sType): sExt = ""
-          else: sExt = "_%s"%self.year
+         # else: sExt = "_%s"%self.year
+          else: sExt = "_%s_%s"%(self.year,self.cat)
 
           # Extract info
           systOpts = syst.split(":")

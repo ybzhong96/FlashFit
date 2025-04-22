@@ -105,6 +105,8 @@ def getRateVar(_hists):
 columns_data = ['proc','cat','inputWSFile','nominalDataName']
 for stype in ['scales','scalesCorr','smears']:
   systs = getattr( opt, stype )
+ # print("========================108===============================")
+ # print(outputNuisanceExtMap)
   for s in systs.split(","):
     if s == '': continue
     for x in ['mean','sigma','rate']: 
@@ -115,7 +117,9 @@ data = pd.DataFrame( columns=columns_data )
 # Loop over processes and add row to dataframe
 for _proc in opt.procs.split(","):
   # Glob M125 filename
-  _WSFileName = glob.glob("%s/output*M125*%s.root"%(opt.inputWSDir,_proc))[0]
+  _WSFileName = glob.glob("%s/*_output*M125*%s.root"%(opt.inputWSDir,_proc))[0]
+  print("============================================119============================================")
+  print(_WSFileName)
   _nominalDataName = "%s_125_%s_%s"%(procToData(_proc.split("_")[0]),sqrts__,opt.cat)
   data = pd.concat([data,pd.DataFrame([{'proc':_proc,'cat':opt.cat,'inputWSFile':_WSFileName,'nominalDataName':_nominalDataName}])], ignore_index=True, sort=False)
 
@@ -127,13 +131,20 @@ for ir,r in data.iterrows():
   # Open ROOT file and extract workspace
   f = ROOT.TFile(r['inputWSFile'])
   inputWS = f.Get(inputWSName__)
- 
+  print("============================================132====================================================")
+  inputWS.Print("v")
+  print(inputNuisanceExtMap)
+ # print(r)
+  print(r['nominalDataName'])
+  print(opt)
   # Loop over scale and smear systematics
   for stype in ['scales','scalesCorr','smears']:
     for s in getattr(opt,stype).split(","):
       if s == '': continue
       sname = "%s%s"%(inputNuisanceExtMap[stype],s)
       #print("    * Systematic = %s (%s)"%(sname,stype))
+      print("=============================140======================================")
+      print(sname)
       hists = getHistograms(inputWS,r['nominalDataName'],sname)
       # If nominal yield = 0:
       if hists['nominal'].Integral() == 0: _meanVar, _sigmaVar, _rateVar = 0, 0, 0

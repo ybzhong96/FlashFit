@@ -99,7 +99,6 @@ options['nProcs'] = len(options['procs'].split(","))
 if options['cats'] == "auto":
   options['cats'] = extractListOfCats(WSFileNames)
 options['nCats'] = len(options['cats'].split(","))
-print("skipVS",options['skipVertexSplit'])
 # Extract low and high MH values
 mps = []
 for mp in options['massPoints'].split(","): mps.append(int(mp))
