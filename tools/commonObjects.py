@@ -15,22 +15,19 @@ sqrts__ = "13p6TeV"
 
 # Luminosity map in fb^-1: for using UL 2018
 lumiMap = {
-    '2016':36.33, 
-    '2017':41.48, 
-    '2018':59.83, 
     'combined':137.65, 
     'merged':137.65,
-    '2022preEE':7.98,
-    '2022postEE':26.67,
+    #'2022preEE':7.98,
+    #'2022postEE':26.67,
     #'2022': 34.65,
-    '2022' : 1.0,
-    '2023preBPix': 17.80,
-    '2023postBPix': 9.45,
-    '2023': 27.25
+    '2223' : 61.9
+   # '2023preBPix': 17.80,
+   # '2023postBPix': 9.45,
+   # '2023': 27.25
 }
 # If using ReReco samples then switch to lumiMap below (missing data in 2018 EGamma data set)
 #lumiMap = {'2016':36.33, '2017':41.48, '2018':59.35, 'combined':137.17, 'merged':137.17}
-lumiScaleFactor = 1.0 #1000. # Converting from pb to fb
+lumiScaleFactor = 1000. # Converting from pb to fb
 
 # Constants
 BR_W_lnu = 3.*10.86*0.01
@@ -40,11 +37,11 @@ BR_Z_qq = 69.91*0.01
 BR_W_qq = 67.41*0.01
 
 # Production modes and decay channel: for extract XS from combine
-productionModes = ['ggH','vbfH','ttH','vH','bbH','ggHH']
+productionModes = ['ggHH','ggH','vbfH','ttH','vH','bbH']
 decayMode = 'hgg'
 
 # List of years
-years_to_process = ['2022','2022preEE','2022postEE', '2023preBPix', '2023postBPix', '2023']
+years_to_process = ['2223']#,'2022preEE','2022postEE', '2023preBPix', '2023postBPix', '2023', '2223']
 
 # flashgg input WS objects
 inputWSName__ = "tagsDumper/cms_hgg_13TeV"

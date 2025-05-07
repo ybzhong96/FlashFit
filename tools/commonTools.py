@@ -73,7 +73,7 @@ def signalFromFileName(_fileName):
     elif "ZToNuNu" in _fileName: d = "_ZToNuNu"
     else: d = "_ZToQQ"
   elif "GluGlu" in _fileName: p = "ggh"
-  #elif "VBF" in _fileName: p = "vbf"
+  elif "VBFHH" in _fileName: p = "vbfhh"
   elif "VBFH" in _fileName: p = "vbfh"
 #  elif "WH" in _fileName: p = "wh"
   elif "VH" in _fileName: p = "vh"
@@ -96,7 +96,7 @@ def massFromFileName(_fileName):
 procToDataMap = od()
 procToDataMap['GG2H'] = 'ggh'
 procToDataMap['VBFH'] = 'vbfh'
-#procToDataMap['VBF'] = 'vbf'
+procToDataMap['VBFHH'] = 'vbfhh'
 #procToDataMap['WH2HQQ'] = 'wh'
 #procToDataMap['ZH2HQQ'] = 'zh'
 #procToDataMap['QQ2HLNU'] = 'wh'
@@ -123,11 +123,11 @@ def dataToProc( _d ):
 # Mapping of process to name in datacard
 procToDatacardNameMap = od()
 procToDatacardNameMap['GG2H'] = "ggH"
-#procToDatacardNameMap['VBF'] = "qqH"
+procToDatacardNameMap['VBF'] = "vbfHH"
 #procToDatacardNameMap['WH2HQQ'] = "WH_had"
 #procToDatacardNameMap["ZH2HQQ"] = "ZH_had"
 #procToDatacardNameMap["QQ2HLNU"] = "WH_lep"
-#procToDatacardNameMap["QQ2HLL"] = "ZH_lep"
+procToDatacardNameMap["GG2HH"] = "ggHH"
 procToDatacardNameMap["TTH"] = "ttH"
 procToDatacardNameMap["BBH"] = "bbH"
 procToDatacardNameMap["VH"] = "vH"

@@ -21,7 +21,7 @@ import HiggsAnalysis.CombinedLimit.PhysicsModel as models
 class dummy_options:
   def __init__(self):
     self.physModel = "HiggsAnalysis.CombinedLimit.PhysicsModel:floatingHiggsMass"
-    self.physOpt = ["higgsMassRange=110,140"]
+    self.physOpt = ["higgsMassRange=90,250"]
     self.bin = True
     self.fileName = "dummy.root"
     self.cexpr = False
@@ -32,35 +32,39 @@ class dummy_options:
 
 # Functions to get XS/BR
 def getXS(_SM,_MHVar,_mh,_pm):
- # _MHVar.setVal(_mh)
- # return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
-  if _pm == "ggHH":
-    return 1.0  
-    #return 0.03413
-  if _pm == "ggH":
-    return 52.23 # 13.6TeV, mH=125GeV, in pb
-  if _pm == "ttH":
-    return 0.57
-  if _pm == "qqH" or _pm == "vbfH":
-    return 4.078
-  if _pm == "vH":
-    return 2.401
-  if _pm == "bbH":
-    return 0.5266
-  else:
-    print(_pm)  
-    print("--> [ERROR] getXS input name are not correct")
+  try:
+    _MHVar.setVal(_mh)
+    return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
+  except:
+    print(" --> [WARNING] XS for %s not found in combine. Using 1.0"%_pm)
+    return 1.0
+ # if _pm == "ggHH":
+ #   return 0.03413
+ # if _pm == "ggH":
+ #   return 52.23    # 13.6TeV, mH=125GeV, in pb
+ # if _pm == "ttH":
+ #   return 0.57
+ # if _pm == "qqH" or _pm == "vbfH":
+ #   return 4.078
+ # if _pm == "vH":
+ #   return 2.401
+ # if _pm == "bbH":
+  #  return 0.5266
+  #if _pm == "vbfHH":
+  #  return 0.001874
+ # else:
+ #   print(_pm)  
+ #   print("--> [ERROR] getXS input name are not correct")
     #_MHVar.setVal(_mh)
     #return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
 
 
 
 def getBR(_SM,_MHVar,_mh,_dm):
-  if _dm == "hgg": 
-    return 2.27E-03
-  else:
-    _MHVar.setVal(_mh)
-    return _SM.modelBuilder.out.function("SM_BR_%s"%_dm).getVal()
+#  if _dm == "hgg": 
+    return 1.0  
+#  _MHVar.setVal(_mh)
+#  return _SM.modelBuilder.out.function("SM_BR_%s"%_dm).getVal()
 
 # Function to initialise XS values from combine
 def initialiseXSBR():
@@ -85,9 +89,11 @@ def initialiseXSBR():
   xsbr['constant'] = []
   mh = 120.
   while( mh < 130.05 ):
-    for pm in productionModes: 
-       # print("-------------------------finalModel--65---------------------")
-       # print(pm, xsbr[pm])
+    for pm in productionModes:
+       # print("======================================")
+       # print(pm)
+       # print(sqrts__)
+       # SM.modelBuilder.out.allFunctions().Print()
         xsbr[pm].append(getXS(SM,MHVar,mh,pm))
     xsbr[decayMode].append(getBR(SM,MHVar,mh,decayMode))
     xsbr['constant'].append(1.)
@@ -235,7 +241,7 @@ class FinalModel:
           # If corr/global nor in sType then build separate nuisance per year i.e. de-correlate
           if('Corr' in sType)|('Global' in sType): sExt = ""
          # else: sExt = "_%s"%self.year
-          else: sExt = "_%s_%s"%(self.year,self.cat)
+          else: sExt = "_%s_%s_%s"%(self.proc,self.year,self.cat)
 
           # Extract info
           systOpts = syst.split(":")

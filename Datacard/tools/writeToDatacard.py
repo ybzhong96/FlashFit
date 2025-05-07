@@ -120,7 +120,12 @@ def writeSystematic(f,d,s,options,stxsMergeScheme=None,scaleCorrScheme=None):
           for ir,r in d[d['cat']==cat].iterrows():
             if r['proc'] == "data_obs": continue
             # Extract value and add to line (with checks)
-            sval = r["%s%s%s"%(s['name'],mergeStr,tierStr)]
+            if s['type'] == 'factory':
+                sval = r["%s%s%s"%(s['name'],mergeStr,tierStr)]
+            else: 
+                sval = r["%s%s%s"%(s['name'],mergeStr,tierStr)]
+           # if s['type'] == 'factory': print("check=====126=====", sval,s['name'])
+          #  print(sval)
             lsyst = addSyst(lsyst,sval,stitle,r['proc'],cat) # added one by one
         # Remove final space from line and add to file
         f.write("%s\n"%lsyst[:-1])
@@ -169,11 +174,14 @@ def addSyst(l,v,s,p,c):
   if type(v) is str: 
     l += "%-15s "%v
     return l
-  elif type(v) is list: 
+#  elif type(v) is list and type(v[0]) is str:
+#    l += "%-15s "%v[0]
+#    return l
+  elif type(v) is list:  
     # Symmetric:
     if len(v) == 1: 
       # Check 1: variation is non-negligible. If not then skip
-      if abs(v[0]-1)<0.0005: l += "%-15s "%"-"
+      if abs(v[0]-1.0)<0.0005: l += "%-15s "%"-"
       # Check 2: variation is not negative. Print message and add - to datacard (cleaned later)
       elif v[0] < 0.: 
         print(" --> [WARNING] systematic %s: negative variation for (%s,%s)"%(s,p,c))

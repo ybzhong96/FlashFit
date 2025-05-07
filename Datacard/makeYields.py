@@ -172,11 +172,11 @@ print(" ........................................................................
 from tools.calcSystematics import factoryType, calcSystYields
 
 # Create columns in dataFrame to store yields
-data['nominal_yield'] = np.nan
-data['nominal_yield'] = data['nominal_yield'].astype('float64')
-#data['sumw2'] = '-'
-data['sumw2'] = np.nan
-data['sumw2'] = data['sumw2'].astype('float64')
+data['nominal_yield'] = '-'
+#data['nominal_yield'] = data['nominal_yield'].astype('float64')
+data['sumw2'] = '-'
+#data['sumw2'] = np.nan
+#data['sumw2'] = data['sumw2'].astype('float64')
 
 
 if not opt.skipCOWCorr: data['nominal_yield_COWCorr'] = '-'
@@ -267,6 +267,7 @@ for ir,r in data[(data['type']=='sig')|(data['type']=='singleH')].iterrows():
         if f in ['a_w','a_h']: 
           for direction in ['up','down']: 
             data.at[ir,"%s_%s_yield"%(s,direction)] = experimentalSystYields["%s_%s"%(s,direction)]
+         # data.at[ir,"%s_yield"%s] = (experimentalSystYields["%s_up"%s]+experimentalSystYields["%s_down"%s])/2.0
         else:
           data.at[ir,"%s_yield"%s] = experimentalSystYields[s]
 

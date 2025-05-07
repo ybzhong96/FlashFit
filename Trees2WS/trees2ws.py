@@ -57,10 +57,10 @@ def add_vars_to_workspace(_ws=None,_data=None,_stxsVar=None):
     elif var == "dZ": 
       _vars[var] = ROOT.RooRealVar(var,var,0.,-20.,20.)
       _vars[var].setBins(40)
-    elif var == "eventWeight": 
-      _vars[var] = ROOT.RooRealVar(var,var,0.)
-   # elif var == "weight":
+  #  elif var == "eventWeight": 
    #   _vars[var] = ROOT.RooRealVar(var,var,0.)
+    elif var == "weight":
+      _vars[var] = ROOT.RooRealVar(var,var,0.)
     else:
       _vars[var] = ROOT.RooRealVar(var,var,1.,-999999,999999)
       _vars[var].setBins(1)
@@ -270,13 +270,13 @@ for stxsId in data[stxsVar].unique():
     dName = "%s_%s_%s_%s"%(opt.productionMode,opt.inputMass,sqrts__,cat)
     print("dname", dName)
     print("aset",aset)
-    d = ROOT.RooDataSet(dName,dName,aset,'eventWeight') 
+    d = ROOT.RooDataSet(dName,dName,aset,'weight') 
 
     # Loop over events in dataframe and add entry
     for row in df[mask][varNames].to_numpy():
       for i, val in enumerate(row):
         aset[i].setVal(val)
-      d.add(aset,aset.getRealValue("eventWeight"))
+      d.add(aset,aset.getRealValue("weight"))
 
     # Add to workspace
     getattr(ws,'import')(d)
@@ -298,7 +298,7 @@ for stxsId in data[stxsVar].unique():
           aset = make_argset(ws,systematicsVarsDropWeight)
           
           h = ROOT.RooDataHist(hName,hName,aset)
-          for row, weight in zip(sdf[mask][systematicsVarsDropWeight].to_numpy(),sdf[mask]["weight"].to_numpy()):
+          for row, weight in zip(sdf[mask][systematicsVarsDropWeight].to_numpy(),sdf[mask]["weight"].to_numpy()): #rename weight to eventWeight
             for i, val in enumerate(row):
               aset[i].setVal(val)
             h.add(aset,weight)

@@ -74,11 +74,11 @@ def factoryType(d,s):
     dataHistUp = "%s_%sUp01sigma"%(r.nominalDataName,s['name'])
     dataHistDown = "%s_%sDown01sigma"%(r.nominalDataName,s['name'])
     # Check if syst is var (i.e. weight) in workspace
-    # ws.Print("v")
-    # if ws.allVars().selectByName("%s*"%(s['name'])).getSize():
-    if ws.allVars().selectByName("CMS_hgg_mass").getSize():
-      nWeights = ws.allVars().selectByName("CMS_hgg_mass").getSize()
-      #nWeights = ws.allVars().selectByName("%s*"%(s['name'])).getSize()
+    if (ws.allVars().selectByName("weight_%sUp"%(s['name'])).getSize()+
+            ws.allVars().selectByName("weight_%sDown"%(s['name'])).getSize()):
+   # if ws.allVars().selectByName("CMS_hgg_mass").getSize():
+    #  nWeights = ws.allVars().selectByName("CMS_hgg_mass").getSize()
+      nWeights = ws.allVars().selectByName("weight_%sUp"%(s['name'])).getSize()+ws.allVars().selectByName("weight_%sDown"%(s['name'])).getSize()
       ws.Delete()
       f.Close()
       if nWeights == 2: return "a_w"
@@ -105,7 +105,7 @@ def factoryType(d,s):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Function to extract yield variations for signal row in dataFrame
 def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTypes,skipCOWCorr=True,proc="ggH",year='2016',systWeightScheme="accEff",ignoreWarnings=False):
-
+#  print("==================",_nominalDataName)
   errMessage = "WARNING" if ignoreWarnings else "ERROR"
   errString = "Using nominal yield" if ignoreWarnings else ""
 
@@ -128,11 +128,8 @@ def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTy
   # CHECK: is weight in contents: if not then add syst to systToSkip container + print warning
   systToSkip = []
   for s,f in _systFactoryTypes.items():
-    print("======================================", s, f)
     if f == "a_h": continue
     elif f == "a_w":
-     # print("======================================================================================================================================================")
-    #  print(_nominalDataContents)
       if( "%sUp"%s not in _nominalDataContents )|( "%sDown"%s not in _nominalDataContents ):
         systToSkip.append(s)
         print(" --> [%s] Weight in nominal RooDataSet for systematic (%s) does not exist for (%s,%s). %s"%(errMessage,s,proc,year,errString))
@@ -172,9 +169,10 @@ def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTy
           if centralWeightStr in _nominalDataContents:
             f_central = p.getRealValue(centralWeightStr)
           else:
-            print("Be careful, the centralWeightStr %s cannot be found in the contents of the nominal tree"%centralWeightStr)
+            f_central = 1
+            #print("Be careful, the centralWeightStr %s cannot be found in the contents of the nominal tree"%centralWeightStr)
           # Changed and removed 01sigma to account for HiggsDNA conventions
-          f_up, f_down = p.getRealValue("%sUp"%s), p.getRealValue("%sDown"%s)
+          f_up, f_down = p.getRealValue("weight_%sUp"%s), p.getRealValue("weight_%sDown"%s)
           # Checks:
           # 1) if central weights are zero then skip event
           if f_central == 0: continue
@@ -195,6 +193,8 @@ def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTy
           # Add weights to counters
           systYields["%s_up"%s] += w_up        
           systYields["%s_down"%s] += w_down
+          #print(w_down,w_up,w_down.type())
+          #systYields[s] += (w_down+w_up)/2
           if not skipCOWCorr:
             if f_COWCorr != 0:
               systYields["%s_up_COWCorr"%s] += w_up*(f_NNLOPS/f_COWCorr)
@@ -266,7 +266,8 @@ def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTy
 # EXPERIMENTAL SYSTEMATICS FACTORY:
 # d - dataFrame, systs - dict of systematics, ftype - dict of factoryTypes
 def experimentalSystFactory(d,systs,ftype,options,_removal=False):
-
+ # print(d)
+ # print(d[['bTagSF_sys_jes_up_yield','bTagSF_sys_hf_up_yield']])
   # Loop over systematics and add new column in dataFrame
   for s in systs:
     if s['type'] == 'constant': continue
@@ -281,8 +282,6 @@ def experimentalSystFactory(d,systs,ftype,options,_removal=False):
     f = ftype[s['name']]
     if s['correlateAcrossYears']:
       mask = (d['type']=='sig')&(~d['cat'].str.contains("NOTAG"))
-      print("mask",mask)
-      print("sname", s['name'])
       d.loc[mask,s['name']] = d[mask].apply(lambda x: compareYield(x,f,s['name']), axis=1)
     else:
       for year in options.years.split(","):
@@ -413,7 +412,6 @@ def theorySystFactory(d,systs,ftype,options,stxsMergeScheme=None,_removal=False)
 # Function for extracting systematic factors:
 #   * mode == treatment of theory systematic  
 def compareYield(row,factoryType,sname,mode='default',mname=None):
-
   # Catch: if any yields in denominators are zero: return 1
   if row['nominal_yield']==0:
     if factoryType in ["a_w","a_h"]: return [1.,1.]

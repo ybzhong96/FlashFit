@@ -71,8 +71,8 @@ if opt.doSystematics:
       if s['name'] == 'JetHEM': experimentalFactoryType[s['name']] = "a_h"
       else: 
         experimentalFactoryType[s['name']] = factoryType(data[mask],s)
-    if s['type'] == 'constant':
-        experimentalFactoryType[s['name']] = factoryType(data[mask],s)
+    #if s['type'] == 'constant':
+    #    experimentalFactoryType[s['name']] = factoryType(data[mask],s)
   print("done exp_sys")
   for s in theory_systematics:
     if s['type'] == 'factory': 
@@ -158,6 +158,14 @@ fdata = open(fdataName,"w")
 if not writePreamble(fdata,opt): 
   print(" --> [ERROR] in writing preamble. Leaving...")
   leave()
+
+#print(data.columns)
+#print(data[[ 'bTagSF_sys_hfstats2_up_yield', 'bTagSF_sys_hfstats2_down_yield']])
+#print(data['bTagSF_sys_hfstats2'])
+#print(data['bTagSF_sys_cferr1'])
+#print(data['bTagSF_sys_lf'])
+
+
 if not writeProcesses(fdata,data,opt):
   print(" --> [ERROR] in writing processes. Leaving...")
   leave()
