@@ -103,39 +103,32 @@ if opt.prune:
   print(" ..........................................................................................")
   print(" --> Pruning processes which contribute < %.2f%% of RECO category yield"%(100*opt.pruneThreshold))
   data['prune'] = 0
-  print("data-----------",data)
   if opt.doTrueYield:
     print(" --> Using the true yield of process for pruning: N = Product(XS,BR,eff*acc,lumi)")
+       #for process in data['procOriginal'][0:6]: 
     mask = (data['type']=='sig')
-
-    # Extract XS*BR using tools.XSBR
+      # Extract XS*BR using tools.XSBR
     data['xsbr'] = '-'
     from tools.XSBR import *
-    print("check-114-----------",opt.analysis)
-    print(data)
     XSBR = extractXSBR(data,mass=opt.mass,analysis=opt.analysis)
+    print(XSBR)
     data.loc[mask,'xsbr'] = data[mask].apply(lambda x: XSBR["XS_%s"%x['procOriginal']]*XSBR['BR'], axis=1)
-
     # Extract eff*acc using total proc yield: strictly should include NOTAG
     data['ea'] = '-'
     # In HiggsDNA the sumw = eff*acc
     data.loc[mask,'ea'] = data.loc[mask,'nominal_yield']
-
     # Calculate true yield
     data.loc[mask,'true_yield'] = data[mask].apply(lambda x: x['xsbr']*x['ea']*x['rate'], axis=1)
-
     # Extract per category tue yields
     catTrueYields = od()
     for cat in data.cat.unique(): catTrueYields[cat] = data[(data['cat']==cat)&(data['type']=='sig')].true_yield.sum()
-
-    # Set prune = 1 if < threshold of total cat yield
+      # Set prune = 1 if < threshold of total cat yield
     mask = (data['true_yield']<opt.pruneThreshold*data.apply(lambda x: catTrueYields[x['cat']], axis=1))&(data['type']=='sig')&(~data['cat'].str.contains('NOTAG'))
     data.loc[mask,'prune'] = 1
 
   else:
     print(" --> Using nominal yield of process (sumEntries) for pruning")
-    mask = (data['type']=='sig')
-
+    mask = (data['type']=='sig') 
     # Extract per category yields
     catYields = od()
     for cat in data.cat.unique(): catYields[cat] = data[(data['cat']==cat)&(data['type']=='sig')].nominal_yield.sum()

@@ -21,31 +21,33 @@
 
 theory_systematics = [
                 # Normalisation uncertainties: enter interpretations
-                {'name':'BR_hgg','title':'BR_hgg','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':"0.97/1.021"},
-                #{'name':'QCDscale_ggH','title':'QCDscale_ggH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_ggh.json'},
-                #{'name':'QCDscale_qqH','title':'QCDscale_qqH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_qqh.json'},
-                #{'name':'QCDscale_VH','title':'QCDscale_VH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_vh.json'}, # Note: VH had components accounted for in THU_qqH_*, set to 1 in json
-                #{'name':'QCDscale_ttH','title':'QCDscale_ttH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_tth.json'},
-                #{'name':'QCDscale_bbH','title':'QCDscale_bbH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_bbh.json'},
+                {'name':'BR_hgg','title':'BR_hgg', 'proc': 'all','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':"0.9791/1.0205"},
+                {'name':'BR_hbb','title':'BR_hbb', 'proc': 'GG2HH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':"0.9874/1.0124"},
+                {'name':'QCDscale_ggH','title':'QCDscale_ggH', 'proc':'GG2H', 'type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.039'},
+                {'name':'QCDscale_qqH','title':'QCDscale_qqH', 'proc':'VBFH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'0.997/1.004'},
+                {'name':'QCDscale_VH','title':'QCDscale_VH', 'proc':'VH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'0.984/1.0179'},
+                {'name':'QCDscale_ttH','title':'QCDscale_ttH','proc':'TTH', 'type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'0.908/1.058'},
+                {'name':'QCDscale_bbH','title':'QCDscale_bbH','proc':'BBH', 'type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'0.761/1.201'},
 
-                #{'name':'pdf_Higgs_ggH','title':'pdf_Higgs_ggH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_ggh.json'},
-                #{'name':'pdf_Higgs_qqH','title':'pdf_Higgs_qqH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_qqh.json'},
-                #{'name':'pdf_Higgs_VH','title':'pdf_Higgs_VH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_vh.json'},
-                #{'name':'pdf_Higgs_bbH','title':'pdf_Higgs_bbH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_bbh.json'},
-                #{'name':'pdf_Higgs_ttH','title':'pdf_Higgs_ttH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_tth.json'},
+                {'name':'pdf_Higgs_ggHH','title':'pdf_Higgs_ggHH','proc':'GG2HH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.03'},
+                {'name':'pdf_Higgs_ttH','title':'pdf_Higgs_ttH','proc':'TTH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.03'},
 
-                #{'name':'alphaS_ggH','title':'alphaS_ggH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_ggh.json'},
-                #{'name':'alphaS_qqH','title':'alphaS_qqH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_qqh.json'},
-                #{'name':'alphaS_VH','title':'alphaS_VH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_vh.json'},
-                #{'name':'alphaS_bbH','title':'alphaS_bbH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_bbh.json'},
-                #{'name':'alphaS_ttH','title':'alphaS_ttH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'theory_uncertainties/thu_tth.json'},
+                {'name':'pdf_Higgs_vbfH','title':'pdf_Higgs_vbfH','proc':'VBFH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.021'},
+                {'name':'pdf_Higgs_VH','title':'pdf_Higgs_VH','proc':'VH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.0154'},
+                {'name':'pdf_Higgs_ggH','title':'pdf_Higgs_ggH','proc':'GG2H','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.019'},
+                {'name':'alphaS','title':'alphaS', 'proc':'split', 'type':'constant','prior':'lnN','correlateAcrossYears':1, 'value': {'GG2H':'1.026', 'VBFH':'1.005', 'VH':'1.009', 'TTH':'1.02'}},
 
-                {'name': 'alphaS_ggHH','title':'alphaS_ggHH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.02'},
-              #  {'name': 'pdf_Higgs_ggHH', 'title': 'pdf_Higgs_ggHH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.02'},
+               # {'name':'alphaS_ggH','title':'alphaS_ggH', 'proc':'GG2H', 'type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.026'},
+               # {'name':'alphaS_vbfH','title':'alphaS_vbfH', 'proc':'VBFH', 'type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.005'},
+               # {'name':'alphaS_VH','title':'alphaS_VH', 'proc':'VH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.009'},
+               # {'name':'alphaS_ttH','title':'alphaS_ttH', 'proc':'TTH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.02'},
 
-                {'name':'QCDscale_ggHH','title':'QCDscale_ggHH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.030'}
+                {'name': 'QCDscale_ggHH','title':'QCDscale_ggHH','proc':'GG2HH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'0.77/1.06'},
+                
 
 
+                {'name': 'bbH_norm_ggH','title':'bbH_norm_ggH','proc':'GG2H','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.5'},
+                {'name': 'bbH_norm_ggH','title':'bbH_norm_ggH','proc':'VBFH','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':'1.5'}
 
                 # Shape uncertainties: enter direct XS measurements
                 # Shape uncertainties: enter direct XS measurements
@@ -79,14 +81,23 @@ theory_systematics = [
 # correlateAcrossYears = -1 : partially correlated
 
 experimental_systematics = [
-                {'name':'lumi_13p6TeV_2022','title':'lumi_13p6TeV_2022','type':'constant','prior':'lnN','correlateAcrossYears':1,'value':"1.014"},
-                {'name':'weight_Pileup','title':'CMS_hgg_PileupWeight','type':'constant','prior':'lnN','correlateAcrossYears':1, 'value':"1.008/0.992"}
-               # {'name':'weight_TriggerSF','title':'CMS_hgg_TriggerWeight','type':'factory','prior':'lnN','correlateAcrossYears':1},
-               # {'name':'weight_ElectronVetoSF','title':'CMS_hgg_ElectronVetoSF','type':'factory','prior':'lnN','correlateAcrossYears':1},
-   #             {'name':'weight_PreselSF','title':'CMS_hgg_PreselSF','type':'factory','prior':'lnN','correlateAcrossYears':1},
-    #            {'name':'weight_SF_photon_ID','title':'CMS_hgg_phoIdMva','type':'factory','prior':'lnN','correlateAcrossYears':1},
-     #           {'name':'energyErrShift','title':'CMS_hgg_SigmaEOverEShift','type':'factory','prior':'lnN','correlateAcrossYears':1}
-              ]
+               {'name':'lumi_13p6TeV_2022','title':'lumi_13p6TeV_2022','proc':'all', 'type':'constant','prior':'lnN','correlateAcrossYears':1,'value':"1.014"},
+               {'name':'bTagSF_sys_cferr2','title':'bTagSF_sys_cferr2','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'bTagSF_sys_jes','title':'bTagSF_sys_jes','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'bTagSF_sys_hf','title':'bTagSF_sys_hf','type':'factory','prior':'lnN','correlateAcrossYears':1},
+           
+               {'name':'TriggerSF','title':'TriggerSF','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'ElectronVetoSF','title':'ElectronVetoSF','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'bTagSF_sys_lfstats2', 'title':'bTagSF_sys_lfstats2','type':'factory','prior':'lnN','correlateAcrossYears':1},
+                
+               {'name':'bTagSF_sys_hfstats1', 'title':'bTagSF_sys_hfstats1','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'PreselSF', 'title':'PreselSF','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'Pileup', 'title':'Pileup','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'bTagSF_sys_lfstats1', 'title':'bTagSF_sys_lfstats1','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'bTagSF_sys_hfstats2', 'title':'bTagSF_sys_hfstats2','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'bTagSF_sys_cferr1', 'title':'bTagSF_sys_cferr1','type':'factory','prior':'lnN','correlateAcrossYears':1},
+               {'name':'bTagSF_sys_lf', 'title':'bTagSF_sys_lf','type':'factory','prior':'lnN','correlateAcrossYears':1}
+               ]
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -40,12 +40,16 @@ def writeProcesses(f,d,options):
     lbin_cat += "%-55s "%cat
     lobs_cat += "%-55s "%"-1"
     sigID = 0
+    HID = 2
     # Loop over rows for respective category
     for ir,r in d[d['cat']==cat].iterrows():
       if r['proc'] == "data_obs": continue
       lbin_procXcat += "%-55s "%cat
       lproc += "%-55s "%r['proc']
       if r['proc'] == "bkg_mass": lprocid += "%-55s "%"1"
+      elif "HH" not in r['proc'] and "H" in r['proc']: 
+        lprocid += "%-55s "%HID
+        HID += 1
       else:
         lprocid += "%-55s "%sigID
         sigID -= 1
@@ -72,9 +76,11 @@ def writeSystematic(f,d,s,options,stxsMergeScheme=None,scaleCorrScheme=None):
     # If not correlated: separate nuisance per year
     if s['mode'] in ['scales','smears']:
       for year in options.years.split(","):
-        stitle_y = "%s_%s"%(stitle,year) 
-        lsyst = "%-70s  param    %-6s %-6s"%(stitle_y,s['mean'],s['sigma'])
-        f.write("%s\n"%lsyst)
+          for process in d['procOriginal'][0:7]:
+              for category in ['cat0','cat1','cat2']:
+                  stitle_y = "%s%s_%s_%s"%(stitle,process,year,category) 
+                  lsyst = "%-70s  param    %-6s %-6s"%(stitle_y, s['mean'],s['sigma'])
+                  f.write("%s\n"%lsyst)
     else:
       lsyst = "%-70s  param    %-6s %-6s"%(stitle,s['mean'],s['sigma'])
       f.write("%s\n"%lsyst)
@@ -115,7 +121,7 @@ def writeSystematic(f,d,s,options,stxsMergeScheme=None,scaleCorrScheme=None):
             if r['proc'] == "data_obs": continue
             # Extract value and add to line (with checks)
             sval = r["%s%s%s"%(s['name'],mergeStr,tierStr)]
-            lsyst = addSyst(lsyst,sval,stitle,r['proc'],cat)
+            lsyst = addSyst(lsyst,sval,stitle,r['proc'],cat) # added one by one
         # Remove final space from line and add to file
         f.write("%s\n"%lsyst[:-1])
         # For uncorrelated scale weights: not for merged bins
@@ -202,31 +208,38 @@ def writeMCStatUncertainty(f,d,options):
   if options.prune:
     mask = (d['prune']==0)
     d = d[mask]
+  
 
+  for process in d['procOriginal'][0:7]:
   # Separate nuisance for each cat * years: ~Barlow-Beeston-Lite approach
-  for scat in d.cat.unique():
-    for year in options.years.split(","):
-      # Extract sval
-      mask = (d['year']==year)&(d['cat']==scat)&(d['type']=='sig')
-      sumw = d[mask]['nominal_yield'].sum()
-      sumw2 = d[mask]['sumw2'].sum()
-      scval = [1+(math.sqrt(sumw2)/sumw)]
-      d[d['type']=='sig']
-      stitle = "MCStat_%s_%s"%(year,scat)
-      sprior = "lnN"
-      lsyst = '%-50s  %-10s    '%(stitle,sprior)
+    for scat in d.cat.unique():
+      for year in options.years.split(","):
+        # Extract sval
+        #mask = (d['year']==year)&(d['cat']==scat)&(d['type']=='sig')
+        mask = (d['type']=='sig')&(d['year']==year)&(d['cat']==scat)&(d['procOriginal']==process)
+        sumw = d[mask]['nominal_yield'].sum()
+        sumw2 = d[mask]['sumw2'].sum()
+        if sumw == 0:
+            scval = [1.0]
+        else:
+            scval = [1+(math.sqrt(sumw2)/sumw)]
+        #d[d['type']=='sig']
+        d[d['procOriginal']==process]
+        stitle = "MCStat_%s_%s"%(process,scat)
+        sprior = "lnN"
+        lsyst = '%-50s  %-10s    '%(stitle,sprior)
       # Loop over categories and then iterate over rows in category
-      for cat in d.cat.unique():
-        for ir,r in d[d['cat']==cat].iterrows():
-          if r['proc'] == "data_obs": continue
-          elif r['type'] == "sig": 
-            sval = scval if cat == scat else '-'
-          else:
-            sval = '-'
-          # Extract value and add to line (with checks)
-          lsyst = addSyst(lsyst,sval,stitle,r['proc'],cat)
-      # Remove final space from line and add to file
-      f.write("%s\n"%lsyst[:-1])
+        for cat in d.cat.unique():
+          for ir,r in d[d['cat']==cat].iterrows():
+            if r['proc'] == "data_obs": continue
+            elif r['procOriginal'] == process:  #elif r['type'] == "sig": 
+              sval = scval if cat == scat else '-'
+            else:
+              sval = '-'
+            # Extract value and add to line (with checks)
+            lsyst = addSyst(lsyst,sval,stitle,r['proc'],cat)
+        # Remove final space from line and add to file
+        f.write("%s\n"%lsyst[:-1])
   
   return True
 

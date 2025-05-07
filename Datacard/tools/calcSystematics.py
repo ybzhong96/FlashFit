@@ -22,8 +22,13 @@ def addConstantSyst(sd,_syst,options):
       sd.loc[(sd['type']=='sig'),_syst['name']] = sd[(sd['type']=='sig')].apply(lambda x: getValueFromJson(x,uval,_syst['name']), axis=1)
     else:
       # If signal and not NOTAG then set value
-      sd.loc[(sd['type']=='sig')&(~sd['cat'].str.contains("NOTAG")), _syst['name']] = _syst['value']
-
+      if _syst['proc']=="all":
+          sd.loc[(sd['type']=='sig')&(~sd['cat'].str.contains("NOTAG")), _syst['name']] = _syst['value']
+      elif _syst['proc']=="split":
+          for item in _syst['value']:
+              sd.loc[(sd['type']=='sig')&(~sd['cat'].str.contains("NOTAG"))&(sd['procOriginal']==item), _syst['name']] = _syst['value']["%s"%item]
+      else:    
+          sd.loc[(sd['type']=='sig')&(~sd['cat'].str.contains("NOTAG"))&(sd['procOriginal']==_syst['proc']), _syst['name']] = _syst['value']
   # Partial correlation
   elif _syst['correlateAcrossYears'] == -1:
     sd[_syst['name']] = '-'
@@ -74,7 +79,6 @@ def factoryType(d,s):
     if ws.allVars().selectByName("CMS_hgg_mass").getSize():
       nWeights = ws.allVars().selectByName("CMS_hgg_mass").getSize()
       #nWeights = ws.allVars().selectByName("%s*"%(s['name'])).getSize()
-      print("nWeights",nWeights)
       ws.Delete()
       f.Close()
       if nWeights == 2: return "a_w"
@@ -124,8 +128,11 @@ def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTy
   # CHECK: is weight in contents: if not then add syst to systToSkip container + print warning
   systToSkip = []
   for s,f in _systFactoryTypes.items():
+    print("======================================", s, f)
     if f == "a_h": continue
     elif f == "a_w":
+     # print("======================================================================================================================================================")
+    #  print(_nominalDataContents)
       if( "%sUp"%s not in _nominalDataContents )|( "%sDown"%s not in _nominalDataContents ):
         systToSkip.append(s)
         print(" --> [%s] Weight in nominal RooDataSet for systematic (%s) does not exist for (%s,%s). %s"%(errMessage,s,proc,year,errString))

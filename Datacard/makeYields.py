@@ -11,6 +11,7 @@ import pandas as pd
 import glob
 import pickle
 import math
+import numpy as np
 from collections import OrderedDict
 from systematics import theory_systematics, experimental_systematics, signal_shape_systematics
 
@@ -32,8 +33,8 @@ def get_options():
   parser.add_option('--mergeYears', dest='mergeYears', default=False, action="store_true", help="Merge category across years")
   parser.add_option('--skipBkg', dest='skipBkg', default=False, action="store_true", help="Only add signal processes to datacard")
   parser.add_option('--bkgScaler', dest='bkgScaler', default=1., type="float", help="Add overall scale factor for background")
-  parser.add_option('--sigModelWSDir', dest='sigModelWSDir', default='./Models/signal', help='Input signal model WS directory') 
-  parser.add_option('--sigModelExt', dest='sigModelExt', default='packaged', help='Extension used when saving signal model') 
+  parser.add_option('--sigModelWSDir', dest='sigModelWSDir', default='../Combine/Models/signal', help='Input signal model WS directory') 
+  parser.add_option('--sigModelExt', dest='sigModelExt', default='sig0424_packaged', help='Extension used when saving signal model') 
   parser.add_option('--bkgModelWSDir', dest='bkgModelWSDir', default='./Models/background', help='Input background model WS directory') 
   parser.add_option('--bkgModelExt', dest='bkgModelExt', default='multipdf', help='Extension used when saving background model') 
   # For yields calculations:
@@ -102,7 +103,6 @@ for year in years:
     # Input flashgg ws 
     _inputWSFile = glob.glob("%s/*M%s*_%s.root"%(inputWSDirMap[year],opt.mass,proc))[0]
     _nominalDataName = "%s_%s_%s_%s"%(_proc_s0,opt.mass,sqrts__,opt.cat)
-
     # If opt.skipZeroes check nominal yield if 0 then do not add
     skipProc = False
     if opt.skipZeroes:
@@ -120,12 +120,16 @@ for year in years:
       _modelWSFile = "%s/CMS-HGG_sigfit_%s_%s.root"%(opt.sigModelWSDir,opt.sigModelExt,_cat)
       _model = "%s_%s:%s_%s"%(outputWSName__,sqrts__,outputWSObjectTitle__,_id)
 
+#    print(_modelWSFile , _model)
     # Extract rate from lumi
     _rate = float(lumiMap[year])*1000
 
     # Add signal process to dataFrame:
     print(" --> Adding to dataFrame: (proc,cat) = (%s,%s)"%(_proc,_cat))
+                    # if "ggHH" in _proc or "vbfHH" in _proc:
     data.loc[len(data)] = [year,'sig',_procOriginal,_proc,_proc_s0,_cat,_inputWSFile,_nominalDataName,_modelWSFile,_model,_rate]
+             #   else: 
+             #   data.loc[len(data)] = [year,'singleH',_procOriginal,_proc,_proc_s0,_cat,_inputWSFile,_nominalDataName,_modelWSFile,_model,_rate]
 
 # Background and data processes
 if( not opt.skipBkg)&( opt.cat != "NOTAG" ):
@@ -168,8 +172,13 @@ print(" ........................................................................
 from tools.calcSystematics import factoryType, calcSystYields
 
 # Create columns in dataFrame to store yields
-data['nominal_yield'] = '-'
-data['sumw2'] = '-'
+data['nominal_yield'] = np.nan
+data['nominal_yield'] = data['nominal_yield'].astype('float64')
+#data['sumw2'] = '-'
+data['sumw2'] = np.nan
+data['sumw2'] = data['sumw2'].astype('float64')
+
+
 if not opt.skipCOWCorr: data['nominal_yield_COWCorr'] = '-'
 
 # Add columns in dataFrame for systematic yield variations
@@ -203,16 +212,24 @@ if opt.doSystematics:
       else: 
         data['%s_yield'%s['name']] = '-'
         if not opt.skipCOWCorr: data['%s_yield_COWCorr'%s['name']] = '-'
-
 # Loop over signal rows in dataFrame: extract yields (nominal & systematic variations)
-totalSignalRows = float(data[data['type']=='sig'].shape[0])
-for ir,r in data[data['type']=='sig'].iterrows():
+preSignalRows = float(data[data['type']=='sig'].shape[0])
+totalSignalRows = float(data[(data['type']=='sig')|(data['type']=='singleH')].shape[0])
+#print(preSignalRows, totalSignalRows)
+#f = ROOT.TFile("/uscms/home/yzhong/nobackup/2223_0424_sample/ws_GG2HH/bbH_output_M125_BBH.root")
+#ws = f.Get(inputWSName__)
+#ws.Print("V")
+#print(ws.allVars().selectByName("CMS_hgg_mass").getSize())
+#print(ws.var("CMS_hgg_mass"))
+for ir,r in data[(data['type']=='sig')|(data['type']=='singleH')].iterrows():
 
   print(" --> Extracting yields: (%s,%s) [%.1f%%]"%(r['proc'],r['cat'],100*(float(ir)/totalSignalRows)))
 
   # Open input WS file and extract workspace
   f_in = ROOT.TFile(r.inputWSFile)
   inputWS = f_in.Get(inputWSName__)
+  # made change Apr 29
+  
   # Extract nominal RooDataSet and yield
   rdata_nominal = inputWS.data(r.nominalDataName)
 
@@ -225,8 +242,11 @@ for ir,r in data[data['type']=='sig'].iterrows():
     w = rdata_nominal.weight()
     y += w
     sumw2 += w*w
+    #print(r.procOriginal,w,w*w,y,sumw2)
     # Extract contents from first event
-    if i == 0: contents = p.contentsString()
+    if i == 0:
+        contents = p.contentsString()
+     #   print(contents)
     if not opt.skipCOWCorr:
       f_COWCorr = p.getRealValue("centralObjectWeight") if "centralObjectWeight" in contents else 1.
       f_NNLOPS = abs(p.getRealValue("NNLOPSweight")) if "NNLOPSweight" in contents else 1.
@@ -252,7 +272,7 @@ for ir,r in data[data['type']=='sig'].iterrows():
 
     # For theoretical systematics:
     theorySystYields = calcSystYields(r['nominalDataName'],contents,inputWS,theoryFactoryType,skipCOWCorr=opt.skipCOWCorr,proc=r['proc'],year=r['year'],ignoreWarnings=opt.ignore_warnings)
-    for s,f in theoryFactoryType.items():
+    for s,f in theoryFactoryType.items():  
       if f in ['a_w','a_h']: 
         for direction in ['up','down']: 
           data.at[ir,"%s_%s_yield"%(s,direction)] = theorySystYields["%s_%s"%(s,direction)]

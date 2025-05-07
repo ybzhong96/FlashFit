@@ -27,18 +27,19 @@ XSBRMap['0310'] = od()
 #XSBRMap['testV_231024']['decay'] = {'mode':'hgg'}
 XSBRMap['0310']['decay'] = {'mode':'hgg'}
 
-XSBRMap['0310']['GG2HH'] = {'mode':'constant'} #, 'factor': 2*0.582}
+XSBRMap['0310']['GG2HH'] = {'mode':'constant','factor': 2*0.582}
 #XSBRMap['bbgg']['GGHH'] = {'mode':'constant'}                         # ggHH signal production (XS) fb
 XSBRMap['0310']['GG2H'] = {'mode':'constant'}                          # ggH background production (XS) fb
 XSBRMap['0310']['TTH'] = {'mode':'constant'}                           # ttH single-H background production (XS) fb
 XSBRMap['0310']['VBFH'] = {'mode':'constant'}                           # VBF single-H background production (XS) fb
 XSBRMap['0310']['VH'] = {'mode':'constant'}                             # VH single-H background production (XS) fb
 XSBRMap['0310']['BBH'] = {'mode':'constant'} 
+XSBRMap['0310']['VBFHH'] = {'mode':'constant','factor': 2*0.582}
 
 
 # Tutorial analysis
 XSBRMap['tutorial'] = od()
-XSBRMap['tutorial']['decay'] = {'mode':'hgg'}
+XSBRMap['tutorial']['decay'] = {'mode':'constant', 'factor':0.0227}
 XSBRMap['tutorial']['GG2H'] = {'mode':'constant', 'factor':51.96}
 XSBRMap['tutorial']['VBF'] = {'mode':'constant', 'factor':4.067}
 
@@ -183,8 +184,8 @@ class dummy_options:
 # Functions to get XS/BR
 def getXS(_SM,_MHVar,_mh,_pm):
   if _pm == "ggHH":
-    return 1.0 
-      # return 0.03413
+   # return 1.0 
+    return 0.03413
   if _pm == "ggH":
     return 52.23 # 13.6TeV, mH=125GeV, in pb
   if _pm == "ttH":
@@ -195,13 +196,14 @@ def getXS(_SM,_MHVar,_mh,_pm):
     return 2.401
   if _pm == "bbH":
     return 0.5266
+  if _pm == "vbfHH":
+    return 0.001874
   else:
     _MHVar.setVal(_mh)
     return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
 def getBR(_SM,_MHVar,_mh,_dm):
   if _dm == "hgg":
     return 1.0
-      #return 2.27E-03
   else:
     _MHVar.setVal(_mh)
     return _SM.modelBuilder.out.function("SM_BR_%s"%_dm).getVal()
@@ -226,9 +228,7 @@ def initialiseXSBR(mass='125'):
   xsbr = od()
 
   for pm in productionModes: 
-      print(pm)
-      xsbr[pm] = getXS(SM,MHVar,float(mass),pm)
-      print(xsbr[pm])
+    xsbr[pm] = getXS(SM,MHVar,float(mass),pm)
   xsbr['constant'] = 1.
   xsbr[decayMode] = getBR(SM,MHVar,float(mass),decayMode)
   # If ggZH and ZH in production modes then make qqZH numpy array
