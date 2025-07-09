@@ -76,15 +76,36 @@ def writeSystematic(f,d,s,options,stxsMergeScheme=None,scaleCorrScheme=None):
     # If not correlated: separate nuisance per year
     if s['mode'] in ['scales','smears']:
       for year in options.years.split(","):
-          for process in d['procOriginal'][0:7]:
-              for category in ['cat0','cat1','cat2']:
-                  stitle_y = "%s%s_%s_%s"%(stitle,process,year,category) 
-                  lsyst = "%-70s  param    %-6s %-6s"%(stitle_y, s['mean'],s['sigma'])
-                  f.write("%s\n"%lsyst)
+        stitle_y = "%s_%s"%(stitle,year) 
+        lsyst = "%-70s  param    %-6s %-6s"%(stitle_y,s['mean'],s['sigma'])
+        f.write("%s\n"%lsyst)
     else:
       lsyst = "%-70s  param    %-6s %-6s"%(stitle,s['mean'],s['sigma'])
       f.write("%s\n"%lsyst)
     return True
+
+        #for year in options.years.split(","):
+         # OnlyH = 0
+          #for process in d['procOriginal'][0:9]:
+           #   if "HH" in process: 
+                  #for category in ['cat0','cat1','cat2']:
+                 #     stitle_y = "%s_%s_%s_%s"%(stitle,process,year,category) 
+                #      lsyst = "%-70s  param    %-6s %-6s"%(stitle_y, s['mean'],s['sigma'])
+               #       f.write("%s\n"%lsyst)
+              #else:
+             #     if OnlyH == 0:
+            #          OnlyH = OnlyH + 1
+           #           for category in ['cat0','cat1','cat2']:
+          #                stitle_y = "%s_%s_%s_%s"%(stitle,"SingleH",year,category)
+         #                 lsyst = "%-70s  param    %-6s %-6s"%(stitle_y, s['mean'],s['sigma'])
+        #                  f.write("%s\n"%lsyst)
+       #           else:
+      #                continue
+
+   # else:
+   #   lsyst = "%-70s  param    %-6s %-6s"%(stitle,s['mean'],s['sigma'])
+   #   f.write("%s\n"%lsyst)
+   # return True
  
   # Else: for yield variation uncertainties...
   # Remove all rows from dataFrame with prune=1 (includes NoTag)
@@ -110,22 +131,22 @@ def writeSystematic(f,d,s,options,stxsMergeScheme=None,scaleCorrScheme=None):
     for mn in mns:
       if mn != '': mergeStr = "_%s"%mn
       else: mergeStr = ''
-    
+      
       # Construct syst line/lines if separate by year
       if(s['correlateAcrossYears'] == 1)|(s['correlateAcrossYears'] == -1):
         stitle = "%s%s%s"%(s['title'],mergeStr,tierStr)
         lsyst = '%-50s  %-10s    '%(stitle,s['prior'])
+        
         # Loop over categories and then iterate over rows in category
         for cat in d.cat.unique():
           for ir,r in d[d['cat']==cat].iterrows():
+            #print("====143", list(r.index))
             if r['proc'] == "data_obs": continue
             # Extract value and add to line (with checks)
-            if s['type'] == 'factory':
-                sval = r["%s%s%s"%(s['name'],mergeStr,tierStr)]
-            else: 
-                sval = r["%s%s%s"%(s['name'],mergeStr,tierStr)]
-           # if s['type'] == 'factory': print("check=====126=====", sval,s['name'])
-          #  print(sval)
+            if "weight_LHEScale_0" in s['name']:
+              sval = r["LHEScale"]
+            else:
+              sval = r["%s%s%s"%(s['name'],mergeStr,tierStr)]
             lsyst = addSyst(lsyst,sval,stitle,r['proc'],cat) # added one by one
         # Remove final space from line and add to file
         f.write("%s\n"%lsyst[:-1])
@@ -174,9 +195,6 @@ def addSyst(l,v,s,p,c):
   if type(v) is str: 
     l += "%-15s "%v
     return l
-#  elif type(v) is list and type(v[0]) is str:
-#    l += "%-15s "%v[0]
-#    return l
   elif type(v) is list:  
     # Symmetric:
     if len(v) == 1: 

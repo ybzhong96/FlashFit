@@ -3,7 +3,7 @@ import os, sys, re, json
 import ROOT
 from commonTools import *
 from commonObjects import *
-
+import numpy as np
 # sd = "systematics dataframe"
 
 # For constant systematics:
@@ -63,9 +63,9 @@ def getValueFromJson(row,uncertainties,sname):
 # b) Symmetric weight in nominal RooDataSet: "s_w"
 # c) Anti-symmetric shifts in RooDataHist: "a_h"
 def factoryType(d,s):
-
   #Fix for pdfWeight (as Nweights > 10)
   if('weight_LHEPd' in s['name']): return "s_w"
+  if('weight_LHEScal' in s['name']): return "s_w"
 
   # Loop over rows in dataframe: until syst is found
   for ir, r in d[d['type']=='sig'].iterrows():
@@ -74,10 +74,7 @@ def factoryType(d,s):
     dataHistUp = "%s_%sUp01sigma"%(r.nominalDataName,s['name'])
     dataHistDown = "%s_%sDown01sigma"%(r.nominalDataName,s['name'])
     # Check if syst is var (i.e. weight) in workspace
-    if (ws.allVars().selectByName("weight_%sUp"%(s['name'])).getSize()+
-            ws.allVars().selectByName("weight_%sDown"%(s['name'])).getSize()):
-   # if ws.allVars().selectByName("CMS_hgg_mass").getSize():
-    #  nWeights = ws.allVars().selectByName("CMS_hgg_mass").getSize()
+    if ws.allVars().selectByName("weight_%sUp"%(s['name'])).getSize()+ws.allVars().selectByName("weight_%sDown"%(s['name'])).getSize():
       nWeights = ws.allVars().selectByName("weight_%sUp"%(s['name'])).getSize()+ws.allVars().selectByName("weight_%sDown"%(s['name'])).getSize()
       ws.Delete()
       f.Close()
@@ -105,7 +102,6 @@ def factoryType(d,s):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Function to extract yield variations for signal row in dataFrame
 def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTypes,skipCOWCorr=True,proc="ggH",year='2016',systWeightScheme="accEff",ignoreWarnings=False):
-#  print("==================",_nominalDataName)
   errMessage = "WARNING" if ignoreWarnings else "ERROR"
   errString = "Using nominal yield" if ignoreWarnings else ""
 
@@ -193,8 +189,6 @@ def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTy
           # Add weights to counters
           systYields["%s_up"%s] += w_up        
           systYields["%s_down"%s] += w_down
-          #print(w_down,w_up,w_down.type())
-          #systYields[s] += (w_down+w_up)/2
           if not skipCOWCorr:
             if f_COWCorr != 0:
               systYields["%s_up_COWCorr"%s] += w_up*(f_NNLOPS/f_COWCorr)
@@ -210,10 +204,16 @@ def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTy
               systYields["%s_COWCorr"%s] += w*(f_NNLOPS/f_COWCorr)
 
         else:
+          # Change for v3 --July 1, skip Scal and Pd  
+          #if "LHEScal" in s or "LHEPd" in s : continue
           if "LHEScal" in s: centralWeightStr = "weight_LHEScal_4"
           elif "LHEPd" in s: centralWeightStr = "weight_LHEPd_0"
           else: centralWeightStr = "weight_central"
           f_central = p.getRealValue(centralWeightStr) if centralWeightStr in _nominalDataContents else 1.
+          
+          # Change for v3 --July 1
+          #f_central = central_s
+
           f = p.getRealValue(s)
           # Checks:
           # 1) if both central weight and shifted weight are 0 then add nominal weight
@@ -233,6 +233,9 @@ def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTy
             # even in the accEff convention, so we need to normalise them here 
             elif systWeightScheme == "accEff" and ('LHEScal' in s or 'LHEPd' in s):
               systYields[s] += w*(f/f_central)
+           # elif systWeightScheme == "accEff" and 'LHEScal' in s:
+           #   systYields["LHEScal_up"] += w*(max_s/f_central)
+           #   systYields["LHEScal_down"] += w*(min_s/f_central)
             elif systWeightScheme == "accEff" and not ('LHEScal' in s or 'LHEPd' in s):
               systYields[s] += w
             else:
@@ -241,6 +244,83 @@ def calcSystYields(_nominalDataName,_nominalDataContents,_inputWS,_systFactoryTy
             if not skipCOWCorr:
               if f_COWCorr != 0:
                 systYields["%s_COWCorr"%s] += w*(f_NNLOPS/f_COWCorr)*(f/f_central)
+# Added on June 30th,2025 ,  for LHEScal and LHEPd Uncertainties 
+#  max_s = 0.0
+#  min_s = 999
+#  central_s = 0.0
+#  mass_binning = np.linspace(100, 160, 46) # 100-160 GeV in 45 bins
+#  LHE_Scale1 = {}
+#  LHE_Scale2 = {}
+
+
+#  for i in range(0,data_nominal.numEntries()):
+#      p = data_nominal.get(i)
+#      mass = p.getRealValue("CMS_hgg_mass")
+#      #central_s+= p.getRealValue("%s"%s)
+#      bin_id = np.digitize(mass, mass_binning) # which bin it falls into
+#      for s, f in _systFactoryTypes.items():
+#          if "LHEScale_0" in s:
+#              LHE_Scale1  
+#          if "LHEScale_1" in s:
+#
+#          if "LHEScale_3" in s:
+#
+#          if "LHEScale_4" in s:
+#          
+#          if "LHEScale_5" in s:
+#
+#          if "LHEScale_7" in s:
+#
+#          if "LHEScale_8" in s:
+
+          
+               
+
+
+#  for s, f in _systFactoryTypes.items():
+#      if "LHEScale" not in s: continue
+#      if "LHEScale_2" in s or "LHEScale_6" in s: continue
+#      if "LHEScale_4" in s:
+#          for i in range(0,data_nominal.numEntries()):
+#              p = data_nominal.get(i)
+#              central_s+= p.getRealValue("%s"%s)
+            #  mass = p.getRealValue("CMS_hgg_mass")
+#      else:
+#          sum_s = 0
+#          for i in range(0,data_nominal.numEntries()):
+#              p = data_nominal.get(i)
+#              sum_s += p.getRealValue("%s"%s)
+#          if max_s < sum_s:
+#              max_s = sum_s
+#          if min_s > sum_s:
+#              min_s = sum_s
+#  if central_s!= 0:
+#      systYields["LHEScale_up"] = max_s/central_s
+#      systYields["LHEScale_down"] = min_s/central_s
+#  sq_tmp = 0
+#  w_sum = 0
+#  for s, f in _systFactoryTypes.items():
+#      if "LHEPdf" in s:
+#          w = 0
+#          w_sum = 0
+#          v_pdf = 0
+#          for i in range(0,data_nominal.numEntries()):
+#              p = data_nominal.get(i)
+#              w_sum += data_nominal.weight()
+#              w += p.getRealValue("weight_nominal")
+#              v_pdf += p.getRealValue("%s"%s)
+#          Ratio = w_sum/w
+#          sq_tmp = sq_tmp + pow(v_pdf*Ratio-w_sum,2)
+#  if sq_tmp!= 0 and w_sum!= 0:
+#      systYields["LHEPdf_up"] = w_sum + np.sqrt(sq_tmp)
+#      systYields["LHEPdf_down"] = w_sum - np.sqrt(sq_tmp)
+   #   for i in range(0,data_nominal.numEntries()):
+   #       p = data_nominal.get(i)
+   #       w = data_nominal.weight()
+   #       if systWeightScheme == "accEff":
+   #           systYields["LHEScale_up"] = max_s/central_s
+   #           systYields["LHEScale_down"] = min_s/central_s
+
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # For systematics stored as separate RooDataHists
@@ -353,11 +433,12 @@ def theorySystFactory(d,systs,ftype,options,stxsMergeScheme=None,_removal=False)
   # Loop over systematics and add new column in dataFrame for each tier
   for s in systs:
     if s['type'] == 'constant': continue
-    for tier in s['tiers']: 
-      if tier == 'mnorm': 
-        if options.doSTXSMerging:
-          for mergeName in stxsMergeScheme: d["%s_%s_mnorm"%(s['name'],mergeName)] = '-'
-      else: d["%s_%s"%(s['name'],tier)] = '-'
+    
+  #  for tier in s['tiers']: 
+  #    if tier == 'mnorm': 
+  #      if options.doSTXSMerging:
+  #        for mergeName in stxsMergeScheme: d["%s_%s_mnorm"%(s['name'],mergeName)] = '-'
+  #    else: d["%s_%s"%(s['name'],tier)] = '-'
 
   # Loop over systematics and fill entries for rows which satisfy mask
   for s in systs:
@@ -368,9 +449,9 @@ def theorySystFactory(d,systs,ftype,options,stxsMergeScheme=None,_removal=False)
     if "THU_ggH" in s['name']: mask = (d['type']=='sig')&(d['nominal_yield']!=0)&(d['proc'].str.contains('ggH'))
     else: mask = (d['type']=='sig')&(d['nominal_yield']!=0)
     # Loop over tiers and use appropriate mode for compareYield function: skip mnorm as treated separately below
-    for tier in s['tiers']: 
-      if tier == 'mnorm': continue
-      d.loc[mask,"%s_%s"%(s['name'],tier)] = d[mask].apply(lambda x: compareYield(x,f,s['name'],mode=tier), axis=1)
+   # for tier in s['tiers']: 
+   #   if tier == 'mnorm': continue
+   #   d.loc[mask,"%s_%s"%(s['name'],tier)] = d[mask].apply(lambda x: compareYield(x,f,s['name'],mode=tier), axis=1)
 
   # For merging STXS bins in parameter scheme: calculate mnorm systematics (merged-STXS-normalisation)
   # One nuisance per merge
@@ -432,7 +513,12 @@ def compareYield(row,factoryType,sname,mode='default',mname=None):
       midpoint_yield = 0.5*(row["%s_down_yield"%sname]+row["%s_up_yield"%sname])
       if midpoint_yield == 0: return [1.,1.]
       else: return [(row["%s_down_yield"%sname]/midpoint_yield),(row["%s_up_yield"%sname]/midpoint_yield)]
-    elif factoryType == "a_w": return [(row["%s_down_yield"%sname]/row['nominal_yield']),(row["%s_up_yield"%sname]/row['nominal_yield'])]
+    elif factoryType == "a_w": 
+     # if "sys_" in s['name'] and "1" in s['name']:
+      #  return [0.56*(row["%s_down_yield"%sname]/row['nominal_yield']),0.56*(row["%s_up_yield"%sname]/row['nominal_yield'])]
+     # elif "sys_" in s['name'] and "2" in s['name']:
+     #   return [0.44*(row["%s_down_yield"%sname]/row['nominal_yield']),0.44*(row["%s_up_yield"%sname]/row['nominal_yield'])]
+      return [(row["%s_down_yield"%sname]/row['nominal_yield']),(row["%s_up_yield"%sname]/row['nominal_yield'])]
     else: return [row["%s_yield"%sname]/row['nominal_yield']]
 
   elif mode=='shape':
