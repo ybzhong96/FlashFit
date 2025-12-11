@@ -1,22 +1,24 @@
 #!/usr/bin/env python
 
 from biasUtils import *
+import os.path as path 
+import os
 
 from optparse import OptionParser
 parser = OptionParser()
 parser.add_option("-d","--datacard",default="Datacard.root")
 parser.add_option("-w","--workspace",default="w")
 parser.add_option("-t","--toys",action="store_true", default=False)
-parser.add_option("-n","--nToys",default=1000,type="int")
+parser.add_option("-n","--nToys",default=50000,type="int")
 parser.add_option("-f","--fits",action="store_true", default=False)
 parser.add_option("-p","--plots",action="store_true", default=False)
 parser.add_option("-e","--expectSignal",default=1.,type="float")
-parser.add_option("-m","--mH",default=125.,type="float")
+parser.add_option("-m","--mH",default=125,type="float")
 parser.add_option("-c","--combineOptions",default="")
 parser.add_option("-s","--seed",default=-1,type="int")
 parser.add_option("--dryRun",action="store_true", default=False)
 parser.add_option("--poi",default="r")
-parser.add_option("--split",default=500,type="int")
+parser.add_option("--split",default=10000,type="int")
 parser.add_option("--selectFunction",default=None)
 parser.add_option("--gaussianFit",action="store_true", default=False)
 (opts,args) = parser.parse_args()
@@ -56,7 +58,7 @@ for ipdf in range(multipdf.getNumPdfs()):
     indexNameMap[ipdf] = multipdf.getPdf(ipdf).GetName()
 
 if opts.toys:
-    if not path.isdir('BiasToysn'): system('mkdir -p BiasToys')
+    if not path.isdir('BiasToysn'): os.system('mkdir -p BiasToys')
     toyCmdBase = 'combine -m %.4f -d %s -M GenerateOnly --expectSignal %.4f -s %g --saveToys %s '%(opts.mH, opts.datacard, opts.expectSignal, opts.seed, opts.combineOptions)
     for ipdf,pdfName in indexNameMap.items():
         name = shortName(pdfName)
@@ -64,33 +66,35 @@ if opts.toys:
             for isplit in range(opts.nToys//opts.split):
                 toyCmd = toyCmdBase + ' -t %g -n _%s_split%g --setParameters %s=%g --freezeParameters %s'%(opts.split, name, isplit, indexName, ipdf, indexName)
                 run(toyCmd, dry=opts.dryRun)
-                system('mv higgsCombine_%s* %s'%(name, toyName(name,split=isplit)))
+                os.system('mv higgsCombine_%s* %s'%(name, toyName(name,split=isplit)))
         else: 
             toyCmd = toyCmdBase + ' -t %g -n _%s --setParameters %s=%g --freezeParameters %s'%(opts.nToys, name, indexName, ipdf, indexName)
             run(toyCmd, dry=opts.dryRun)
-            system('mv higgsCombine_%s* %s'%(name, toyName(name)))
+            os.system('mv higgsCombine_%s* %s'%(name, toyName(name)))
 print()
 
 if opts.fits:
-    if not path.isdir('BiasFits'): system('mkdir -p BiasFits')
-    fitCmdBase = 'combine -m %.4f -d %s -M MultiDimFit -P %s --algo singles %s '%(opts.mH, opts.datacard, opts.poi, opts.combineOptions)
+    if not path.isdir('BiasFits'): os.system('mkdir -p BiasFits')
+    fitCmdBase = 'combine -m %.4f -d %s -M MultiDimFit -P %s --algo singles %s'%(opts.mH, opts.datacard, opts.poi, opts.combineOptions)
     for ipdf,pdfName in indexNameMap.items():
         name = shortName(pdfName)
         if opts.nToys > opts.split:
             for isplit in range(opts.nToys//opts.split):
                 fitCmd = fitCmdBase + ' -t %g -n _%s_split%g --toysFile=%s'%(opts.split, name, isplit, toyName(name,split=isplit))
                 run(fitCmd, dry=opts.dryRun)
-                system('mv higgsCombine_%s* %s'%(name, fitName(name,split=isplit)))
+                os.system('mv higgsCombine_%s* %s'%(name, fitName(name,split=isplit)))
             run('hadd %s BiasFits/*%s*split*.root'%(fitName(name),name), dry=opts.dryRun)
         else:
             fitCmd = fitCmdBase + ' -t %g -n _%s --toysFile=%s'%(opts.nToys, name, toyName(name))
             run(fitCmd, dry=opts.dryRun)
-            system('mv higgsCombine_%s* %s'%(name, fitName(name)))
+            os.system('mv higgsCombine_%s* %s'%(name, fitName(name)))
 
 if opts.plots:
-    if not path.isdir('BiasPlots'): system('mkdir -p BiasPlots')
+    if not path.isdir('BiasPlots'): os.system('mkdir -p BiasPlots')
     for ipdf,pdfName in indexNameMap.items():
         name = shortName(pdfName)
+        # when bern Fit is empty
+        if "bern" in name: continue
         tfile = r.TFile(fitName(name))
         tree = tfile.Get('limit')
         pullHist = r.TH1F('pullsForTruth_%s'%name, 'Pull distribution using the envelope to fit %s'%name, 80, -4., 4.)

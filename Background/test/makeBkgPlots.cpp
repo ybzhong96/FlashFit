@@ -647,7 +647,7 @@ void plotAllPdfs(RooRealVar *mgg, RooAbsData *data, RooMultiPdf *mpdf, RooCatego
 	RooPlot *plot = mgg->frame();
 	plot->SetTitle(Form("Background functions profiled for category %s",catname.c_str()));
 	plot->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV)");
-	plot->GetYaxis()->SetTitle("Events");
+	plot->GetYaxis()->SetTitle("Events / GeV");
 	if (!unblind) {
 		mgg->setRange("unblind_up",135,180);
 		mgg->setRange("unblind_down",100,115);
@@ -721,7 +721,7 @@ int main(int argc, char* argv[]){
   lumi_13TeV ="2.6 fb^{-1}";
   lumi_8TeV  = "19.1 fb^{-1}"; // default is "19.7 fb^{-1}"
   lumi_7TeV  = "4.9 fb^{-1}";  // default is "5.1 fb^{-1}"
-  lumi_sqrtS = "13 TeV";       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
+  lumi_sqrtS = "13.6 TeV";       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
 
 
 	string bkgFileName;
@@ -736,7 +736,7 @@ int main(int argc, char* argv[]){
 	bool useBinnedData=false;
 	bool isMultiPdf=false;
 	bool doSignal=false;
-	bool unblind=false;
+	bool unblind=true;
 	bool makeCrossCheckProfPlots=false;
 	int mhLow;
 	int mhHigh;
@@ -878,6 +878,10 @@ int main(int argc, char* argv[]){
 	RooPlot *plot = mgg->frame();
 	RooPlot *plotLC = mgg->frame();
 	plot->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV)");
+        plot->GetXaxis()->SetTitleSize(0.045);
+        plot->GetXaxis()->SetTitleOffset(0.4);
+        plot->GetYaxis()->SetTitle("Events / GeV");
+        plot->GetYaxis()->SetTitleSize(0.05);
 	plot->SetTitle("");
 	data->plotOn(plot,Binning(80),Invisible());
   ///start extra bit for ratio plot///
@@ -1115,10 +1119,10 @@ int main(int argc, char* argv[]){
 		latex->SetTextSize(0.045);
 		latex->SetNDC();
 		TLatex *cmslatex = new TLatex();
-		cmslatex->SetTextSize(0.03);
+		cmslatex->SetTextSize(0.028);
 		cmslatex->SetNDC();
 		std::cout << "[INFO] intLumi " << intLumi << std::endl;
-		//cmslatex->drawlatex(0.2,0.85,form("#splitline{cms preliminary}{#sqrt{s} = %dtev l = %2.3ffb^{-1}}",sqrts,intlumi));
+		cmslatex->DrawLatex(0.2,0.9,"#bf{CMS} #it{Preliminary}");
 		//cmslatex->DrawLatex(0.25,0.85,Form("#splitline{}{#sqrt{s} = %dTeV L = %2.1ffb^{-1}}",sqrts,intLumi));
     TString catLabel_humanReadable = catLabel;
     catLabel_humanReadable.ReplaceAll("_"," ");

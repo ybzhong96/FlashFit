@@ -176,6 +176,13 @@ if opt.doSystematics:
       leave()
   writeBreak(fdata)
   for syst in theory_systematics:
+    if "weight_LHEScale" in syst['name']:
+      if "weight_LHEScale_0" in syst['name']:
+        if not writeSystematic(fdata,data,syst,opt,stxsMergeScheme=STXSMergingScheme,scaleCorrScheme=STXSScaleCorrelationScheme):
+          print(" --> [ERROR] in writing systematic %s (theory). Leaving"%syst['name'])
+          leave()
+      else:
+        continue
     if not writeSystematic(fdata,data,syst,opt,stxsMergeScheme=STXSMergingScheme,scaleCorrScheme=STXSScaleCorrelationScheme):
       print(" --> [ERROR] in writing systematic %s (theory). Leaving"%syst['name'])
       leave()

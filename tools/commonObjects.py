@@ -20,7 +20,8 @@ lumiMap = {
     #'2022preEE':7.98,
     #'2022postEE':26.67,
     #'2022': 34.65,
-    '2223' : 61.9
+    '2223' : 61.9,
+    '2224' : 170.98
    # '2023preBPix': 17.80,
    # '2023postBPix': 9.45,
    # '2023': 27.25
@@ -37,11 +38,11 @@ BR_Z_qq = 69.91*0.01
 BR_W_qq = 67.41*0.01
 
 # Production modes and decay channel: for extract XS from combine
-productionModes = ['ggHH','ggH','vbfH','ttH','vH','bbH']
+productionModes = ['ggHH','ggH','vbfH','ttH','vH','bbH','SingleH','ggHHkl0','ggHHkl2p45','ggHHkl5']
 decayMode = 'hgg'
 
 # List of years
-years_to_process = ['2223']#,'2022preEE','2022postEE', '2023preBPix', '2023postBPix', '2023', '2223']
+years_to_process = ['2223','2224']#,'2022preEE','2022postEE', '2023preBPix', '2023postBPix', '2023', '2223']
 
 # flashgg input WS objects
 inputWSName__ = "tagsDumper/cms_hgg_13TeV"

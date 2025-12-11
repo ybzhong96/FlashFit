@@ -63,6 +63,8 @@ procsMap = od()
 if opt.procs == 'auto':
   for y,iWSDir in inputWSDirMap.items():
     WSFileNames = extractWSFileNames(iWSDir)
+    print("****************************************************************************")
+    print(WSFileNames)
     procsMap[y] = extractListOfProcs(WSFileNames)
   # Require common procs for each year
   for i,iy in enumerate(years):
@@ -76,6 +78,9 @@ if opt.procs == 'auto':
 else: procs = opt.procs.split(",")
 procs.sort()
 
+
+
+
 # Initiate pandas dataframe
 columns_data = ['year','type','procOriginal','proc','proc_s0','cat','inputWSFile','nominalDataName','modelWSFile','model','rate']
 data = pd.DataFrame( columns=columns_data )
@@ -87,9 +92,11 @@ print(" ........................................................................
 # Signal processes
 for year in years:
   for proc in procs:
-
-    # Identifier
-    _id = "%s_%s_%s_%s"%(proc,year,opt.cat,sqrts__)
+    if "HH" in proc:
+      _id = "%s_%s_%s_%s"%(proc,year,opt.cat,sqrts__)
+    # Identifier    
+    else:
+      _id = "SingleH_%s_%s_%s"%(year,opt.cat,sqrts__)
 
     # Mapping to STXS definition here
     _procOriginal = proc
@@ -117,8 +124,11 @@ for year in years:
     # Input model ws 
     if opt.cat == "NOTAG": _modelWSFile, _model = '-', '-'
     else:
-      _modelWSFile = "%s/CMS-HGG_sigfit_%s_%s.root"%(opt.sigModelWSDir,opt.sigModelExt,_cat)
-      _model = "%s_%s:%s_%s"%(outputWSName__,sqrts__,outputWSObjectTitle__,_id)
+        if "HH" in proc:
+            _modelWSFile = "%s/CMS-HGG_sigfit_%s_%s.root"%(opt.sigModelWSDir,proc,_cat)
+        else:
+            _modelWSFile = "%s/CMS-HGG_sigfit_%s_%s.root"%(opt.sigModelWSDir,"H",_cat)
+    _model = "%s_%s:%s_%s"%(outputWSName__,sqrts__,outputWSObjectTitle__,_id)
 
 #    print(_modelWSFile , _model)
     # Extract rate from lumi
@@ -203,6 +213,7 @@ if opt.doSystematics:
   for s in theory_systematics: 
     if s['type'] == 'factory': 
       theoryFactoryType[s['name']] = factoryType(data,s)
+     # print("216===========",s['name'],theoryFactoryType[s['name']])
       if theoryFactoryType[s['name']] in ["a_w","a_h"]:
         data['%s_up_yield'%s['name']] = '-'
         data['%s_down_yield'%s['name']] = '-'
@@ -215,12 +226,8 @@ if opt.doSystematics:
 # Loop over signal rows in dataFrame: extract yields (nominal & systematic variations)
 preSignalRows = float(data[data['type']=='sig'].shape[0])
 totalSignalRows = float(data[(data['type']=='sig')|(data['type']=='singleH')].shape[0])
-#print(preSignalRows, totalSignalRows)
-#f = ROOT.TFile("/uscms/home/yzhong/nobackup/2223_0424_sample/ws_GG2HH/bbH_output_M125_BBH.root")
-#ws = f.Get(inputWSName__)
-#ws.Print("V")
-#print(ws.allVars().selectByName("CMS_hgg_mass").getSize())
-#print(ws.var("CMS_hgg_mass"))
+#data["LHEScale"] = '-'
+#data["LHEScale"] = data["LHEScale"].astype(object)
 for ir,r in data[(data['type']=='sig')|(data['type']=='singleH')].iterrows():
 
   print(" --> Extracting yields: (%s,%s) [%.1f%%]"%(r['proc'],r['cat'],100*(float(ir)/totalSignalRows)))
@@ -229,10 +236,17 @@ for ir,r in data[(data['type']=='sig')|(data['type']=='singleH')].iterrows():
   f_in = ROOT.TFile(r.inputWSFile)
   inputWS = f_in.Get(inputWSName__)
   # made change Apr 29
-  
+  print(inputWS)
+  if "KL" in r.nominalDataName:
+      name = r.nominalDataName
+      print(name)
+      name = "gghh_125_13p6TeV_" + name.split("_125_13p6TeV_", 1)[1]
+      print("**************",name)
+      rdata_nominal = inputWS.data(name)
   # Extract nominal RooDataSet and yield
-  rdata_nominal = inputWS.data(r.nominalDataName)
-
+  else:
+      print(r.nominalDataName)
+      rdata_nominal = inputWS.data(r.nominalDataName)
   # Calculate nominal yield, sumw2 and add COW correction for in acceptance events
   contents = ""
   y, y_COWCorr = 0, 0
@@ -258,34 +272,47 @@ for ir,r in data[(data['type']=='sig')|(data['type']=='singleH')].iterrows():
 
   # Systematics: loop over systematics and use function to extract yield variations
   if opt.doSystematics:
-
     # For experimental systematics: skip NOTAG events
     if "NOTAG" not in r['cat']:
+      if "KL" in r['nominalDataName']:
+          name = "gghh_125_13p6TeV_" + r["nominalDataName"].split("_125_13p6TeV_", 1)[1]
+          experimentalSystYields = calcSystYields(name,contents,inputWS,experimentalFactoryType,skipCOWCorr=True,proc=r['proc'],year=r['year'],systWeightScheme=opt.systWeightScheme,ignoreWarnings=opt.ignore_warnings)
       # Skip centralObjectWeight correction as concerns events in acceptance
-      experimentalSystYields = calcSystYields(r['nominalDataName'],contents,inputWS,experimentalFactoryType,skipCOWCorr=True,proc=r['proc'],year=r['year'],systWeightScheme=opt.systWeightScheme,ignoreWarnings=opt.ignore_warnings)
+      else:
+          experimentalSystYields = calcSystYields(r['nominalDataName'],contents,inputWS,experimentalFactoryType,skipCOWCorr=True,proc=r['proc'],year=r['year'],systWeightScheme=opt.systWeightScheme,ignoreWarnings=opt.ignore_warnings)
       for s,f in experimentalFactoryType.items():
         if f in ['a_w','a_h']: 
           for direction in ['up','down']: 
             data.at[ir,"%s_%s_yield"%(s,direction)] = experimentalSystYields["%s_%s"%(s,direction)]
          # data.at[ir,"%s_yield"%s] = (experimentalSystYields["%s_up"%s]+experimentalSystYields["%s_down"%s])/2.0
         else:
-          data.at[ir,"%s_yield"%s] = experimentalSystYields[s]
-
+          data.at[ir,"%s_yield"%s] = experimentalSystYields[s] 
     # For theoretical systematics:
-    theorySystYields = calcSystYields(r['nominalDataName'],contents,inputWS,theoryFactoryType,skipCOWCorr=opt.skipCOWCorr,proc=r['proc'],year=r['year'],ignoreWarnings=opt.ignore_warnings)
-    for s,f in theoryFactoryType.items():  
+    if "KL" in r['nominalDataName']:    
+        name = "gghh_125_13p6TeV_" + r["nominalDataName"].split("_125_13p6TeV_", 1)[1]
+        theorySystYields = calcSystYields(name,contents,inputWS,theoryFactoryType,skipCOWCorr=opt.skipCOWCorr,proc=r['proc'],year=r['year'],ignoreWarnings=opt.ignore_warnings)
+    else:
+        theorySystYields = calcSystYields(r['nominalDataName'],contents,inputWS,theoryFactoryType,skipCOWCorr=opt.skipCOWCorr,proc=r['proc'],year=r['year'],ignoreWarnings=opt.ignore_warnings)
+    for s,f in theoryFactoryType.items(): 
       if f in ['a_w','a_h']: 
         for direction in ['up','down']: 
           data.at[ir,"%s_%s_yield"%(s,direction)] = theorySystYields["%s_%s"%(s,direction)]
           if not opt.skipCOWCorr: data.at[ir,"%s_%s_yield_COWCorr"%(s,direction)] = theorySystYields["%s_%s_COWCorr"%(s,direction)]
       else:
+       # if "LHEScale" in s or "LHEPdf" in s: continue
         data.at[ir,"%s_yield"%s] = theorySystYields[s]
         if not opt.skipCOWCorr: data.at[ir,"%s_yield_COWCorr"%s] = theorySystYields["%s_COWCorr"%s]
-
+ # data.at[ir,"LHEScale"]=[theorySystYields["LHEScale_down"],theorySystYields["LHEScale_up"]]
+ # print(data.at[ir,"LHEScale"])
+  #data.at[ir,"LHEScale_down_yield"]=theorySystYields["LHEScale_down"]
+ #   data.at[ir,"LHEPdf_up_yield"]=theorySystYields["LHEPdf_up"]
+ #   data.at[ir,"LHEPdf_down_yield"]=theorySystYields["LHEPdf_down"]
   # Remove the workspace and file from heap
   inputWS.Delete()
   f_in.Close()
 
+
+#print(data)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # SAVE YIELDS DATAFRAME
 print(" ..........................................................................................")

@@ -236,7 +236,7 @@ def writeMCStatUncertainty(f,d,options):
     d = d[mask]
   
 
-  for process in d['procOriginal'][0:7]:
+  for process in d['procOriginal'][0:5]:
   # Separate nuisance for each cat * years: ~Barlow-Beeston-Lite approach
     for scat in d.cat.unique():
       for year in options.years.split(","):

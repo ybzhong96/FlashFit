@@ -211,6 +211,8 @@ if opt.doBands:
         for ibin in range(1,opt.nBins+1):_columns.append("wsum_%g"%ibin)
     # Create dataframe
     df_bands = pd.DataFrame(columns=_columns)
+
+   # bands_rows = []
     # Loop over toys file and add row for each toy dataset
     toyFiles = glob.glob("./SplusBModels%s/toys/toy_*.root"%opt.ext)
     if len(toyFiles) == 0:
@@ -220,45 +222,63 @@ if opt.doBands:
       for tidx in range(len(toyFiles)):
         print(" --> Processing toy (%g/%g) ::: %s"%(tidx,len(toyFiles),toyFiles[tidx]))
         ftoy = ROOT.TFile(toyFiles[tidx])
-        toy = ftoy.Get("toys/toy_asimov")
+       
+        #toy = ftoy.Get("toys/toy_1")
+        tdir = ftoy.Get("toys") 
+        toy_names = []
+        for key in tdir.GetListOfKeys():
+            name = key.GetName()
+            if re.match(r"^toy_\d+$", name):
+                toy_names.append(name)
+        toy_names.sort(key=lambda s: int(s.split("_")[1]))
+        for tname in toy_names:
+            toy = tdir.Get(tname)
+            if not toy or not hasattr(toy, "reduce"):
+                print("     * [WARN] Object %s is not a RooDataSet. Skip." % tname)
+                continue
+
         # Flag for vetoing toy
-        vetoToy = False
+            vetoToy = False
         # Save bin contents in dict
-        values = {}
+            values = {}
         # Add columns for summing categories
-        for cat in cats:
-          for ibin in range(1,opt.nBins+1): values['%s_%g'%(cat,ibin)] = 0
-        if opt.doSumCategories:
-          for ibin in range(1,opt.nBins+1): values['sum_%g'%ibin] = 0
-          if opt.doCatWeights:
-            for ibin in range(1,opt.nBins+1): values['wsum_%g'%ibin] = 0
+            for cat in cats:
+                for ibin in range(1,opt.nBins+1): values['%s_%g'%(cat,ibin)] = 0
+            if opt.doSumCategories:
+                for ibin in range(1,opt.nBins+1): values['sum_%g'%ibin] = 0
+                if opt.doCatWeights:
+                    for ibin in range(1,opt.nBins+1): values['wsum_%g'%ibin] = 0
         # Loop over cats
-        for cidx in range(chan.numTypes()):
-          chan.setIndex(cidx)
-          c = chan.getLabel()
-          if( opt.cats == 'all' )|( c in opt.cats.split(",") ):
-            if( opt.doHHMjjFix )&( c in catsfix ): 
-              _xvar, _xvar_arglist = xvarfix, xvarfix_arglist
-            else:
-              _xvar, _xvar_arglist = xvar, xvar_arglist
-            dtoy = toy.reduce("CMS_channel==%g"%(cidx))
-            htoy = _xvar.createHistogram("h_%s"%c,ROOT.RooFit.Binning(opt.nBins,xvar.getMin(),xvar.getMax()))
-            dtoy.fillHistogram(htoy,_xvar_arglist)
-            for ibin in range(1,htoy.GetNbinsX()+1): 
-              v = htoy.GetBinContent(ibin)
-              if v!=v: vetoToy = True # Veto toys which have a NaN
-              values['%s_%g'%(c,ibin)] = v
-              if opt.doSumCategories:
-                values['sum_%g'%ibin] += v
-                if opt.doCatWeights: values['wsum_%g'%ibin] += v*catsWeights[c]
+            for cidx in range(chan.numTypes()):
+                chan.setIndex(cidx)
+                c = chan.getLabel()
+                if( opt.cats == 'all' )|( c in opt.cats.split(",") ):
+                    if( opt.doHHMjjFix )&( c in catsfix ): 
+                        _xvar, _xvar_arglist = xvarfix, xvarfix_arglist
+                    else:
+                        _xvar, _xvar_arglist = xvar, xvar_arglist
+                    dtoy = toy.reduce("CMS_channel==%g"%(cidx))
+                    htoy = _xvar.createHistogram("h_%s"%c,ROOT.RooFit.Binning(opt.nBins,xvar.getMin(),xvar.getMax()))
+                    dtoy.fillHistogram(htoy,_xvar_arglist)
+                    for ibin in range(1,htoy.GetNbinsX()+1): 
+                        v = htoy.GetBinContent(ibin)
+                        if v!=v: vetoToy = True # Veto toys which have a NaN
+                        values['%s_%g'%(c,ibin)] = v
+                        if opt.doSumCategories:
+                            values['sum_%g'%ibin] += v
+                            if opt.doCatWeights: values['wsum_%g'%ibin] += v*catsWeights[c]
             # Option for vetoing toy
-            if opt.doToyVeto:
-              if values['%s_1'%c] == 0: vetoToy = True
-            # Clear memory
-            htoy.Delete()
-            dtoy.Delete()
-        toy.Delete()
+                    if opt.doToyVeto:
+                        if values['%s_1'%c] == 0: vetoToy = True
+                        # Clear memory
+                    htoy.Delete()
+                    dtoy.Delete()
+
+            row = {col: values.get(col, np.nan) for col in _columns}
+            df_bands.loc[len(df_bands)] = row
+            toy.Delete()
         ftoy.Close()
+        df_bands = df_bands.apply(pd.to_numeric, errors="coerce")
         # Add values to dataframe
         if not vetoToy: df_bands.loc[len(df_bands)] = values
         else: print("   --> Toy veto: zero entries in first bin")
@@ -325,9 +345,41 @@ for cidx in range(len(cats)):
   h_sbpdf = {'pdfNBins':sbpdf.createHistogram("h_sb_pdfNBins_%s"%c,_xvar,ROOT.RooFit.Binning(opt.pdfNBins,xvar.getMin(),xvar.getMax())),
              'nBins':sbpdf.createHistogram("h_sb_nBins_%s"%c,_xvar,ROOT.RooFit.Binning(opt.nBins,xvar.getMin(),xvar.getMax()))
             }
+  #print("328===========", xvar.getMin(),xvar.getMax())
   h_bpdf = {'pdfNBins':bpdf.createHistogram("h_b_pdfNBins_%s"%c,_xvar,ROOT.RooFit.Binning(opt.pdfNBins,xvar.getMin(),xvar.getMax())),
              'nBins':bpdf.createHistogram("h_b_nBins_%s"%c,_xvar,ROOT.RooFit.Binning(opt.nBins,xvar.getMin(),xvar.getMax()))
             }
+
+  #### check Yield in 122.5, 127
+ # h_sbpdf = {'pdfNBins':sbpdf.createHistogram("h_sb_pdfNBins_%s"%c,_xvar,ROOT.RooFit.Binning(opt.pdfNBins,122.5,127)),
+  #           'nBins':sbpdf.createHistogram("h_sb_nBins_%s"%c,_xvar,ROOT.RooFit.Binning(opt.nBins,122.5,127))
+  #          }
+#  h_bpdf = {'pdfNBins':bpdf.createHistogram("h_b_pdfNBins_%s"%c,_xvar,ROOT.RooFit.Binning(opt.pdfNBins,122.5,127)),
+#             'nBins':bpdf.createHistogram("h_b_nBins_%s"%c,_xvar,ROOT.RooFit.Binning(opt.nBins,122.5,127))
+#}
+
+  # 假设 bpdf 是你的背景 PDF，mass 是变量 CMS_hgg_mass
+  #mass = bpdf.getVariables().find("CMS_hgg_mass")
+
+# 设定你感兴趣的区间
+  #mass.setRange("signalRegion", 122.5, 127)
+
+# 计算在该区间的归一化积分（概率）
+ # integral = bpdf.createIntegral(
+ #   ROOT.RooArgSet(mass),
+ #   ROOT.RooFit.NormSet(ROOT.RooArgSet(mass)),
+#    ROOT.RooFit.Range("signalRegion")
+#)
+ # prob = integral.getVal()
+
+ # N = bpdf.expectedEvents(ROOT.RooArgSet(mass))
+
+ # expected_events = N * prob
+
+ # print(f"Expected background events in [122.5, 127]: {expected_events}")
+ # print("expected Events:", )
+
+
   # Calculate yields
   SB, B = sbpdf.expectedEvents(_xvar_argset), bpdf.expectedEvents(_xvar_argset)
   S = SB-B

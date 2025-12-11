@@ -83,33 +83,9 @@ QCDscale_ggHH                                       lnN           -             
 bbH_norm_ggH                                        lnN           -               1.5             -               -               -               -               -               -               -               1.5             -               -               -               -               -               -               -               1.5             -               -               -               -               -               -              
 bbH_norm_qqH                                        lnN           -               -               -               -               1.5             -               -               -               -               -               -               -               1.5             -               -               -               -               -               -               -               1.5             -               -               -              
 ----------------------------------------------------------------------------------------------------------------------------------
-CMS_hgg_nuisance_EBScale_SingleH_2223_cat0                              param    0.0    1.0   
-CMS_hgg_nuisance_EBScale_SingleH_2223_cat1                              param    0.0    1.0   
-CMS_hgg_nuisance_EBScale_SingleH_2223_cat2                              param    0.0    1.0   
-CMS_hgg_nuisance_EBScale_GG2HH_2223_cat0                                param    0.0    1.0   
-CMS_hgg_nuisance_EBScale_GG2HH_2223_cat1                                param    0.0    1.0   
-CMS_hgg_nuisance_EBScale_GG2HH_2223_cat2                                param    0.0    1.0   
-CMS_hgg_nuisance_EBScale_VBFHH_2223_cat0                                param    0.0    1.0   
-CMS_hgg_nuisance_EBScale_VBFHH_2223_cat1                                param    0.0    1.0   
-CMS_hgg_nuisance_EBScale_VBFHH_2223_cat2                                param    0.0    1.0   
-CMS_hgg_nuisance_EEScale_SingleH_2223_cat0                              param    0.0    1.0   
-CMS_hgg_nuisance_EEScale_SingleH_2223_cat1                              param    0.0    1.0   
-CMS_hgg_nuisance_EEScale_SingleH_2223_cat2                              param    0.0    1.0   
-CMS_hgg_nuisance_EEScale_GG2HH_2223_cat0                                param    0.0    1.0   
-CMS_hgg_nuisance_EEScale_GG2HH_2223_cat1                                param    0.0    1.0   
-CMS_hgg_nuisance_EEScale_GG2HH_2223_cat2                                param    0.0    1.0   
-CMS_hgg_nuisance_EEScale_VBFHH_2223_cat0                                param    0.0    1.0   
-CMS_hgg_nuisance_EEScale_VBFHH_2223_cat1                                param    0.0    1.0   
-CMS_hgg_nuisance_EEScale_VBFHH_2223_cat2                                param    0.0    1.0   
-CMS_hgg_nuisance_Smearing_SingleH_2223_cat0                             param    0.0    1.0   
-CMS_hgg_nuisance_Smearing_SingleH_2223_cat1                             param    0.0    1.0   
-CMS_hgg_nuisance_Smearing_SingleH_2223_cat2                             param    0.0    1.0   
-CMS_hgg_nuisance_Smearing_GG2HH_2223_cat0                               param    0.0    1.0   
-CMS_hgg_nuisance_Smearing_GG2HH_2223_cat1                               param    0.0    1.0   
-CMS_hgg_nuisance_Smearing_GG2HH_2223_cat2                               param    0.0    1.0   
-CMS_hgg_nuisance_Smearing_VBFHH_2223_cat0                               param    0.0    1.0   
-CMS_hgg_nuisance_Smearing_VBFHH_2223_cat1                               param    0.0    1.0   
-CMS_hgg_nuisance_Smearing_VBFHH_2223_cat2                               param    0.0    1.0   
+CMS_hgg_nuisance_EBScale_2223                              param    0.0    1.0   
+CMS_hgg_nuisance_EEScale_2223                              param    0.0    1.0      
+CMS_hgg_nuisance_Smearing_2223                             param    0.0    1.0   
 ----------------------------------------------------------------------------------------------------------------------------------
 MCStat_BBH_cat0_2223                                lnN           1.175           -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -              
 MCStat_BBH_cat1_2223                                lnN           -               -               -               -               -               -               -               -               1.080           -               -               -               -               -               -               -               -               -               -               -               -               -               -               -              

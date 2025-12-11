@@ -16,7 +16,6 @@ def get_options():
   parser.add_option("--year", dest="year", default="2016", help="If not merging, then specify year for output file name")
   return parser.parse_args()
 (opt,args) = get_options()
-print("19---------------------------------")
 
 def rooiter(x):
   iter = x.iterator()
@@ -27,9 +26,8 @@ def rooiter(x):
 
 # Extract all files to be merged
 fNames = {}
-for ext in opt.exts.split(","): fNames[ext] = glob.glob("outdir_%s_2022/signalFit/output/CMS-HGG_sigfit_%s_*_%s.root"%(ext,ext,opt.cat))
-print("check 30-----------------------------------------------------------------------")
-print(fNames)
+# Add 2223 year
+for ext in opt.exts.split(","): fNames[ext] = glob.glob("outdir_%s_2224/signalFit/output/CMS-HGG_sigfit_%s_*_%s.root"%(ext,ext,opt.cat))
 
 # Define ouput packaged workspace
 print(" --> Packaging output workspaces")

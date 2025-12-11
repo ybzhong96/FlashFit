@@ -17,7 +17,7 @@ def get_options():
     parser = OptionParser()
     parser.add_option('--inputWSFile', dest='inputWSFile', default='Datacard.root', help="Input workspace")
     parser.add_option('--MH', dest='MH', default='125.38', help="MH")
-    parser.add_option('--initial-fit-param', dest='initial_fit_param', default='lumi_13TeV_uncorrelated_2016', help="Initial fit parameter (combine must have an input parameter to fit to, pick any low impact nuisance)")
+    parser.add_option('--initial-fit-param', dest='initial_fit_param', default='CMS_res_j', help="Initial fit parameter (combine must have an input parameter to fit to, pick any low impact nuisance)")
     parser.add_option('--nToys', dest='nToys', default=2000, type='int', help="Number of toys")
     parser.add_option('--mode', dest='mode', default="setup", help="[setup,generate,fixed,envelope]")
     return parser.parse_args()

@@ -108,16 +108,16 @@ RooAbsPdf* PdfModelBuilder::getBernstein(string prefix, int order){
   if (order==1) {
 	RooBernsteinFast<1> *bern = new RooBernsteinFast<1>(prefix.c_str(),prefix.c_str(),*obs_var,*coeffList);
   	return bern;
-  } else if (order==2) {
-	RooBernsteinFast<2> *bern = new RooBernsteinFast<2>(prefix.c_str(),prefix.c_str(),*obs_var,*coeffList);
+  }else if (order==2) {
+ 	RooBernsteinFast<2> *bern = new RooBernsteinFast<2>(prefix.c_str(),prefix.c_str(),*obs_var,*coeffList);
   	return bern;
-  } else if (order==3) {
+  }else if (order==3) {
 	RooBernsteinFast<3> *bern = new RooBernsteinFast<3>(prefix.c_str(),prefix.c_str(),*obs_var,*coeffList);
   	return bern;
-  } else if (order==4) {
+  }else if (order==4) {
 	RooBernsteinFast<4> *bern = new RooBernsteinFast<4>(prefix.c_str(),prefix.c_str(),*obs_var,*coeffList);
   	return bern;
-  } else if (order==5) {
+  }else if (order==5) {
 	RooBernsteinFast<5> *bern = new RooBernsteinFast<5>(prefix.c_str(),prefix.c_str(),*obs_var,*coeffList);
   	return bern;
 //  } else if (order==6) {
@@ -127,7 +127,7 @@ RooAbsPdf* PdfModelBuilder::getBernstein(string prefix, int order){
 //	RooBernsteinFast<7> *bern = new RooBernsteinFast<7>(prefix.c_str(),prefix.c_str(),*obs_var,*coeffList);
  // 	return bern;
   } else {
-	return NULL;
+        return NULL;
   }
   //return bern;
   //bkgPdfs.insert(pair<string,RooAbsPdf*>(bern->GetName(),bern));
@@ -203,7 +203,6 @@ RooAbsPdf* PdfModelBuilder::getPowerLaw(string prefix, int order){
 }
 
 RooAbsPdf* PdfModelBuilder::getExponential(string prefix, int order){
-  
   RooArgList coefList;
   for (int i=0; i<order; i++){
     double start=-1.;
@@ -333,7 +332,9 @@ RooAbsPdf* PdfModelBuilder::getPdfFromFile(string &prefix){
 }
 
 RooAbsPdf* PdfModelBuilder::getExponentialSingle(string prefix, int order){
-  
+//  if (order>1){
+//      order = 1;
+// }
   if (order%2==0){
     cerr << "ERROR -- addExponential -- only odd number of params allowed" << endl;
     return NULL;

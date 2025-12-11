@@ -32,12 +32,13 @@ class dummy_options:
 
 # Functions to get XS/BR
 def getXS(_SM,_MHVar,_mh,_pm):
-  try:
-    _MHVar.setVal(_mh)
-    return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
-  except:
-    print(" --> [WARNING] XS for %s not found in combine. Using 1.0"%_pm)
-    return 1.0
+  return 1.0
+    # try:
+ #   _MHVar.setVal(_mh)
+ #   return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
+ # except:
+ #   print(" --> [WARNING] XS for %s not found in combine. Using 1.0"%_pm)
+ #   return 1.0
  # if _pm == "ggHH":
  #   return 0.03413
  # if _pm == "ggH":
@@ -61,10 +62,10 @@ def getXS(_SM,_MHVar,_mh,_pm):
 
 
 def getBR(_SM,_MHVar,_mh,_dm):
-#  if _dm == "hgg": 
-    return 1.0  
-#  _MHVar.setVal(_mh)
-#  return _SM.modelBuilder.out.function("SM_BR_%s"%_dm).getVal()
+ if _dm == "hgg": 
+  return 0.00227  
+  #_MHVar.setVal(_mh)
+  #return _SM.modelBuilder.out.function("SM_BR_%s"%_dm).getVal()
 
 # Function to initialise XS values from combine
 def initialiseXSBR():
@@ -240,8 +241,8 @@ class FinalModel:
 
           # If corr/global nor in sType then build separate nuisance per year i.e. de-correlate
           if('Corr' in sType)|('Global' in sType): sExt = ""
-         # else: sExt = "_%s"%self.year
-          else: sExt = "_%s_%s_%s"%(self.proc,self.year,self.cat)
+          else: sExt = "_%s"%self.year
+          #else: sExt = "_%s_%s_%s"%(self.proc,self.year,self.cat)
 
           # Extract info
           systOpts = syst.split(":")

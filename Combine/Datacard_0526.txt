@@ -7,33 +7,33 @@ jmax *
 kmax *
 ---------------------------------------------
 
-shapes      bbH_2223_hgg                                            cat0_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
-shapes      ggH_2223_hgg                                            cat0_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
-shapes      ggHH_2223_hgg                                           cat0_2223                                ./Models/signal/CMS-HGG_sigfit_GG2HH_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_GG2HH_2223_cat0_13p6TeV
-shapes      ttH_2223_hgg                                            cat0_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
-shapes      vbfH_2223_hgg                                           cat0_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
-shapes      VBFHH_2223_hgg                                          cat0_2223                                ./Models/signal/CMS-HGG_sigfit_VBFHH_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_VBFHH_2223_cat0_13p6TeV
-shapes      vH_2223_hgg                                             cat0_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
-shapes      bkg_mass                                                cat0_2223                                ./Models/background/CMS-HGG_multipdf_cat0_2223.root multipdf:CMS_hgg_cat0_2223_13TeV_bkgshape
-shapes      data_obs                                                cat0_2223                                ./Models/background/CMS-HGG_multipdf_cat0_2223.root multipdf:roohist_data_mass_cat0
-shapes      bbH_2223_hgg                                            cat1_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
-shapes      ggH_2223_hgg                                            cat1_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
-shapes      ggHH_2223_hgg                                           cat1_2223                                ./Models/signal/CMS-HGG_sigfit_GG2HH_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_GG2HH_2223_cat1_13p6TeV
-shapes      ttH_2223_hgg                                            cat1_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
-shapes      vbfH_2223_hgg                                           cat1_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
-shapes      VBFHH_2223_hgg                                          cat1_2223                                ./Models/signal/CMS-HGG_sigfit_VBFHH_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_VBFHH_2223_cat1_13p6TeV
-shapes      vH_2223_hgg                                             cat1_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
-shapes      bkg_mass                                                cat1_2223                                ./Models/background/CMS-HGG_multipdf_cat1_2223.root multipdf:CMS_hgg_cat1_2223_13TeV_bkgshape
-shapes      data_obs                                                cat1_2223                                ./Models/background/CMS-HGG_multipdf_cat1_2223.root multipdf:roohist_data_mass_cat1
-shapes      bbH_2223_hgg                                            cat2_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
-shapes      ggH_2223_hgg                                            cat2_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
-shapes      ggHH_2223_hgg                                           cat2_2223                                ./Models/signal/CMS-HGG_sigfit_GG2HH_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_GG2HH_2223_cat2_13p6TeV
-shapes      ttH_2223_hgg                                            cat2_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
-shapes      vbfH_2223_hgg                                           cat2_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
-shapes      VBFHH_2223_hgg                                          cat2_2223                                ./Models/signal/CMS-HGG_sigfit_VBFHH_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_VBFHH_2223_cat2_13p6TeV
-shapes      vH_2223_hgg                                             cat2_2223                                ./Models/signal/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
-shapes      bkg_mass                                                cat2_2223                                ./Models/background/CMS-HGG_multipdf_cat2_2223.root multipdf:CMS_hgg_cat2_2223_13TeV_bkgshape
-shapes      data_obs                                                cat2_2223                                ./Models/background/CMS-HGG_multipdf_cat2_2223.root multipdf:roohist_data_mass_cat2
+shapes      bbH_2223_hgg                                            cat0_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
+shapes      ggH_2223_hgg                                            cat0_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
+shapes      ggHH_2223_hgg                                           cat0_2223                                ./Models_old/signal/CMS-HGG_sigfit_GG2HH_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_GG2HH_2223_cat0_13p6TeV
+shapes      ttH_2223_hgg                                            cat0_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
+shapes      vbfH_2223_hgg                                           cat0_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
+shapes      VBFHH_2223_hgg                                          cat0_2223                                ./Models_old/signal/CMS-HGG_sigfit_VBFHH_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_VBFHH_2223_cat0_13p6TeV
+shapes      vH_2223_hgg                                             cat0_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat0_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat0_13p6TeV
+shapes      bkg_mass                                                cat0_2223                                ./Models_old/background/CMS-HGG_multipdf_cat0_2223.root multipdf:CMS_hgg_cat0_2022_13TeV_bkgshape
+shapes      data_obs                                                cat0_2223                                ./Models_old/background/CMS-HGG_multipdf_cat0_2223.root multipdf:roohist_data_mass_cat0
+shapes      bbH_2223_hgg                                            cat1_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
+shapes      ggH_2223_hgg                                            cat1_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
+shapes      ggHH_2223_hgg                                           cat1_2223                                ./Models_old/signal/CMS-HGG_sigfit_GG2HH_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_GG2HH_2223_cat1_13p6TeV
+shapes      ttH_2223_hgg                                            cat1_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
+shapes      vbfH_2223_hgg                                           cat1_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
+shapes      VBFHH_2223_hgg                                          cat1_2223                                ./Models_old/signal/CMS-HGG_sigfit_VBFHH_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_VBFHH_2223_cat1_13p6TeV
+shapes      vH_2223_hgg                                             cat1_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat1_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat1_13p6TeV
+shapes      bkg_mass                                                cat1_2223                                ./Models_old/background/CMS-HGG_multipdf_cat1_2223.root multipdf:CMS_hgg_cat1_2022_13TeV_bkgshape
+shapes      data_obs                                                cat1_2223                                ./Models_old/background/CMS-HGG_multipdf_cat1_2223.root multipdf:roohist_data_mass_cat1
+shapes      bbH_2223_hgg                                            cat2_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
+shapes      ggH_2223_hgg                                            cat2_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
+shapes      ggHH_2223_hgg                                           cat2_2223                                ./Models_old/signal/CMS-HGG_sigfit_GG2HH_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_GG2HH_2223_cat2_13p6TeV
+shapes      ttH_2223_hgg                                            cat2_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
+shapes      vbfH_2223_hgg                                           cat2_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
+shapes      VBFHH_2223_hgg                                          cat2_2223                                ./Models_old/signal/CMS-HGG_sigfit_VBFHH_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_VBFHH_2223_cat2_13p6TeV
+shapes      vH_2223_hgg                                             cat2_2223                                ./Models_old/background/CMS-HGG_sigfit_H_cat2_2223.root wsig_13p6TeV:hggpdfsmrel_SingleH_2223_cat2_13p6TeV
+shapes      bkg_mass                                                cat2_2223                                ./Models_old/background/CMS-HGG_multipdf_cat2_2223.root multipdf:CMS_hgg_cat2_2022_13TeV_bkgshape
+shapes      data_obs                                                cat2_2223                                ./Models_old/background/CMS-HGG_multipdf_cat2_2223.root multipdf:roohist_data_mass_cat2
 
 ---------------------------------------------------------------------------------------------------------------------------------
 bin                           cat0_2223                                               cat1_2223                                               cat2_2223                                              
@@ -110,6 +110,6 @@ MCStat_bkg_mass_cat1_2223                           lnN           -             
 MCStat_bkg_mass_cat2_2223                           lnN           -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -               -              
 ----------------------------------------------------------------------------------------------------------------------------------
 
-pdfindex_cat0_2223_13TeV                                 discrete
-pdfindex_cat1_2223_13TeV                                 discrete
-pdfindex_cat2_2223_13TeV                                 discrete
+pdfindex_cat0_2022_13TeV                                 discrete
+pdfindex_cat1_2022_13TeV                                 discrete
+pdfindex_cat2_2022_13TeV                                 discrete

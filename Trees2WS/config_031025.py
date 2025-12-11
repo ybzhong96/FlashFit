@@ -7,14 +7,13 @@ trees2wsCfg = {
   
   'mainVars':["CMS_hgg_mass","weight","weight_*"], # Var for the nominal RooDataSets
   ### ^^^^ IF YOU CHANGE THE EVENT WEIGHT VAR NAME HERE, ALSO CHANGE IN TREE2WS.PY ^^^^^
-  
-  'dataVars':["CMS_hgg_mass"] ,#,"weight"], # Vars to be added for data
+  'dataVars':["CMS_hgg_mass"], #,"weight"], # Vars to be added for data
   'stxsVar':'',
   'systematicsVars':["CMS_hgg_mass","weight"], # Variables to add to sytematic RooDataHists
   'theoryWeightContainers':{},
 
   # List of systematics: use string YEAR for year-dependent systematics
-  'systematics':["EBScale","EEScale","Smearing", "JEC", "JER"],
+  'systematics':["EBScale","EEScale","Smearing", "JEC22", "JEC23", "JER22", "JER23", "FNUF", "Material"], #"LHEScale", "LHEPdf"],
 
   # Analysis categories: python list of cats or use 'auto' to extract from input tree
   'cats': ['cat0', 'cat1', 'cat2']

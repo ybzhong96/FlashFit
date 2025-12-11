@@ -5,7 +5,7 @@ import pandas
 import numpy as np
 import re
 import scipy.stats
-
+import pandas as pd
 def Translate(name, ndict):
     return ndict[name] if name in ndict else name
 
@@ -66,33 +66,73 @@ def getEffSigma(_h):
   # Return effSigma
   return wmin
 
-def extractBandProperties(data,category,bidx):
-  props = {}
-  if category == 'all': c = 'sum'
-  elif category == 'wall': c = 'wsum'
-  else: c = category
-  props['median'] = np.median(data['%s_%g'%(c,bidx)].values)
-  props['up1sigma'] = np.percentile(data['%s_%g'%(c,bidx)].values,50*(1+math.erf(1./math.sqrt(2))))
-  props['down1sigma'] = np.percentile(data['%s_%g'%(c,bidx)].values,50*(1+math.erf(-1./math.sqrt(2))))
-  props['up2sigma'] = np.percentile(data['%s_%g'%(c,bidx)].values,50*(1+math.erf(2./math.sqrt(2))))
-  props['down2sigma'] = np.percentile(data['%s_%g'%(c,bidx)].values,50*(1+math.erf(-2./math.sqrt(2))))
-  return props
+#def extractBandProperties(data,category,bidx):
+#  props = {}
+#  if category == 'all': c = 'sum'
+#  elif category == 'wall': c = 'wsum'
+#  else: c = category
+#  props['median'] = np.median(data['%s_%g'%(c,bidx)].values)
+#  props['up1sigma'] = np.percentile(data['%s_%g'%(c,bidx)].values,50*(1+math.erf(1./math.sqrt(2))))
+#  props['down1sigma'] = np.percentile(data['%s_%g'%(c,bidx)].values,50*(1+math.erf(-1./math.sqrt(2))))
+#  props['up2sigma'] = np.percentile(data['%s_%g'%(c,bidx)].values,50*(1+math.erf(2./math.sqrt(2))))
+#  props['down2sigma'] = np.percentile(data['%s_%g'%(c,bidx)].values,50*(1+math.erf(-2./math.sqrt(2))))
+#  return props
+
+def extractBandProperties(data, category, bidx):
+    props = {}
+    if category == 'all':
+        c = 'sum'
+    elif category == 'wall':
+        c = 'wsum'
+    else:
+        c = category
+
+    key = '%s_%g' % (c, bidx)
+
+    # 转成数值，无法转换的变 NaN；仅保留有限值
+    arr = pd.to_numeric(data[key], errors='coerce').to_numpy()
+    arr = arr[np.isfinite(arr)]
+
+    # 空列保护（避免 percentile 对空数组报错）
+    if arr.size == 0:
+        raise ValueError(f"[extractBandProperties] Column '{key}' has no finite entries (all NaN/inf or empty).")
+
+    # 计算分位点（与原实现一致）
+    p1 = 50 * (1 + math.erf(1.0 / math.sqrt(2.0)))
+    m1 = 50 * (1 + math.erf(-1.0 / math.sqrt(2.0)))
+    p2 = 50 * (1 + math.erf(2.0 / math.sqrt(2.0)))
+    m2 = 50 * (1 + math.erf(-2.0 / math.sqrt(2.0)))
+
+    props['median']      = np.percentile(arr, 50)
+    props['up1sigma']    = np.percentile(arr, p1)
+    props['down1sigma']  = np.percentile(arr, m1)
+    props['up2sigma']    = np.percentile(arr, p2)
+    props['down2sigma']  = np.percentile(arr, m2)
+    return props
+
+
+
 
 def makeSplusBPlot(workspace,hD,hSB,hB,hS,hDr,hBr,hSr,cat,options,dB=None,reduceRange=None):
   translateCats = {} if options.translateCats is None else LoadTranslations(options.translateCats)
   translatePOIs = {} if options.translatePOIs is None else LoadTranslations(options.translatePOIs)
   blindingRegion = [float(options.blindingRegion.split(",")[0]),float(options.blindingRegion.split(",")[1])]
   if reduceRange is not None:
-    for h in [hD,hDr,hBr,hSr]: h.GetXaxis().SetRangeUser(reduceRange[0],reduceRange[1])
+    for h in [hD,hDr,hBr,hSr]: 
+        h.GetXaxis().SetRangeUser(reduceRange[0],reduceRange[1])
+        h.GetYaxis().SetRangeUser(0.001,50)
     for h_ipdf in [hSB,hB,hS]:
-      for h in h_ipdf.values(): h.GetXaxis().SetRangeUser(reduceRange[0],reduceRange[1])
-  
+      for h in h_ipdf.values(): 
+          h.GetXaxis().SetRangeUser(reduceRange[0],reduceRange[1])
+          h.GetYaxis().SetRangeUser(0.001,50)
+
   canv = ROOT.TCanvas("canv_%s"%cat,"canv_%s"%cat,700,700)
   pad1 = ROOT.TPad("pad1_%s"%cat,"pad1_%s"%cat,0,0.25,1,1)
   pad1.SetTickx()
   pad1.SetTicky()
   pad1.SetBottomMargin(0.18)
   pad1.SetLeftMargin(0.12)
+ # pad1.SetLogy()
   pad1.Draw()
   pad2 = ROOT.TPad("pad2_%s"%cat,"pad2_%s"%cat,0,0,1,0.35)
   pad2.SetTickx()
@@ -175,6 +215,33 @@ def makeSplusBPlot(workspace,hD,hSB,hB,hS,hDr,hBr,hSr,cat,options,dB=None,reduce
     hB['pdfNBins'].SetLineColor(2)
     hB['pdfNBins'].Draw("Hist same c")
 
+  # --- Draw extra signal PDF ---
+ # f_sig = ROOT.TFile.Open("../Combine/Models/signal/CMS-HGG_sigfit_GG2HH_cat0_2223.root")
+ # w_sig = f_sig.Get("wsig_13p6TeV")
+ # sig_pdf = w_sig.pdf("hggpdfsmrel_GG2HH_2223_cat0_13p6TeV")
+ # xvar = w_sig.var("CMS_hgg_mass")
+
+  # Match binning (1 GeV/bin)
+ # nbins = 80
+ # xmin = h_axes.GetXaxis().GetXmin()
+ # xmax = h_axes.GetXaxis().GetXmax()
+
+  # Convert PDF to TH1
+ # sig_hist = sig_pdf.createHistogram("sig_hist", xvar, ROOT.RooFit.Binning(nbins, xmin, xmax))
+
+  # Normalize area to 0.41
+ # integral = sig_hist.Integral("width")  # "width" ensures true PDF normalization
+ # if integral > 0:
+ #     sig_hist.Scale(0.28 / integral)
+
+  # Style
+ # sig_hist.SetLineColor(ROOT.kBlue)
+ # sig_hist.SetLineStyle(2)
+ # sig_hist.SetLineWidth(3)
+
+  # Draw
+ # sig_hist.Draw("HIST SAME")
+
   # Set data style
   gD = ROOT.TGraphAsymmErrors()
   for ibin in range(1,hD.GetNbinsX()+1):
@@ -205,6 +272,7 @@ def makeSplusBPlot(workspace,hD,hSB,hB,hS,hDr,hBr,hSr,cat,options,dB=None,reduce
   if options.doBands:
     leg.AddEntry(gr_1sig,"#pm1 #sigma","F")
     leg.AddEntry(gr_2sig,"#pm2 #sigma","F")
+  #leg.AddEntry(sig_hist,"S_mc","l")
   leg.Draw("Same")
 
   # Add TLatex to plot
@@ -213,12 +281,13 @@ def makeSplusBPlot(workspace,hD,hSB,hB,hS,hDr,hBr,hSr,cat,options,dB=None,reduce
   lat0.SetTextAlign(11)
   lat0.SetNDC()
   lat0.SetTextSize(0.06)
-  #lat0.DrawLatex(0.12,0.92,"#bf{CMS} #it{Preliminary}")
-  lat0.DrawLatex(0.12,0.92,"#bf{CMS}")
+  lat0.DrawLatex(0.12,0.92,"#bf{CMS} #it{Preliminary}")
+  #lat0.DrawLatex(0.12,0.92,"#bf{CMS}")
+
   lat0.DrawLatex(0.6,0.92,"61.9 fb^{-1} (13.6 TeV)")
-  lat0.DrawLatex(0.6,0.8,"#scale[0.6]{%s}"%Translate(cat,translateCats))
+  #lat0.DrawLatex(0.6,0.8,"#scale[0.6]{%s}"%Translate(cat,translateCats))
   #lat0.DrawLatex(0.15,0.83,"#scale[0.75]{H#rightarrow#gamma#gamma}")
-  lat0.DrawLatex(0.15,0.83,"#scale[0.75]{H #rightarrow #gamma#gamma, m_{H} = 125.38 GeV}")
+  #lat0.DrawLatex(0.15,0.83,"#scale[0.75]{H #rightarrow #gamma#gamma, m_{H} = 125.38 GeV}")
   if "PseudoToy" in options.inputWSFile:
     lat0.DrawLatex(0.15,0.76,"#scale[0.75]{Pseudo data}")
 
@@ -260,6 +329,7 @@ def makeSplusBPlot(workspace,hD,hSB,hB,hS,hDr,hBr,hSr,cat,options,dB=None,reduce
     hBr.SetLineWidth(3)
     hBr.SetLineColor(2)
     hBr.Draw("Hist same c")
+
 
   # Set data style
   gDr = ROOT.TGraphAsymmErrors()

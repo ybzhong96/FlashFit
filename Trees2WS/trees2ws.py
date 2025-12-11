@@ -140,7 +140,12 @@ for cat in cats:
   print("    * tree: %s"%treeName)
   # Extract tree from uproot
   t = f[treeName]
-  if t.num_entries == 0: continue
+  
+  print("check --- 144", t.num_entries)
+
+  if t.num_entries == 0: 
+      print("check --- 147")
+      continue
   
   # Convert tree to pandas dataframe
   dfs = {}

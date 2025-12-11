@@ -289,7 +289,8 @@ if opt.doVoigtian:
 ssfMap = od()
 name = "Total" if opt.skipVertexScenarioSplit else "RV"
 print("-----------------------------------------line 291-------------------------------------")
-print(opt.massPoints , opt.MHPolyOrder)
+print("MH", MH)
+
 ssfRV = SimultaneousFit(name,opt.proc,opt.cat,datasetRVForFit,xvar.Clone(),MH,MHLow,MHHigh,opt.massPoints,opt.nBins,opt.MHPolyOrder,opt.minimizerMethod,opt.minimizerTolerance)
 if opt.useDCB: ssfRV.buildDCBplusGaussian()
 else: ssfRV.buildNGaussians(nRV)
@@ -306,8 +307,10 @@ if not opt.skipVertexScenarioSplit:
   ssfWV.buildSplines()
   ssfMap[name] = ssfWV
 
-print("---------------------------------------------------------------------------------------------------------------------")
-print(ssfMap,opt.proc,opt.cat,opt.ext,opt.year,sqrts__,nominalDatasets,xvar,MH,MHLow,MHHigh,opt.massPoints,xsbrMap,procSyst,opt.scales,opt.scalesCorr,opt.scalesGlobal,opt.smears,opt.doVoigtian,opt.useDCB,opt.skipVertexScenarioSplit,opt.skipSystematics)
+
+MH.setVal(125)
+print("309---------------------------------------------------------------------------------------------------------------------")
+print(xvar,"MH" ,MH , "MH low ,high and mass point ",  MHLow,MHHigh,opt.massPoints)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # FINAL MODEL: construction

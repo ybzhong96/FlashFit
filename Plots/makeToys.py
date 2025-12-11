@@ -75,6 +75,7 @@ if opt.batch == 'IC':
   # Change permission of all files and set running on batch
   os.system("chmod 775 ./SplusBModels%s/toys/jobs/sub*.sh"%opt.ext)
   if not opt.dryRun:
+    print("check---Line 78")
     subs = glob.glob("./SplusBModels%s/toys/jobs/sub*"%opt.ext)
     for fsub in subs: os.system("qsub -q hep.q -l h_rt=4:0:0 -l h_vmem=24G %s"%fsub)
   else: print(" --> [DRY-RUN] jobs have not been submitted")
@@ -86,9 +87,11 @@ elif opt.batch == 'condor':
   fsub.write("#!/bin/bash\n")
   fsub.write("ulimit -s unlimited\n")
   fsub.write("set -e\n")
-  fsub.write("cd %s/src\n"%os.environ['CMSSW_BASE'])
-  fsub.write("export SCRAM_ARCH=%s\n"%os.environ['SCRAM_ARCH'])
   fsub.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
+ # fsub.write("cd %s/src\n"%os.environ['CMSSW_BASE'])
+  fsub.write("export SCRAM_ARCH=%s\n"%os.environ['SCRAM_ARCH'])
+  fsub.write("cd %s/src\n"%os.environ['CMSSW_BASE'])
+ # fsub.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
   fsub.write("eval `scramv1 runtime -sh`\n")
   fsub.write("cd %s/src/flashggFinalFit/Plots/SplusBModels%s/toys\n\n"%(os.environ['CMSSW_BASE'],opt.ext))
   fsub.write("itoy=$1\n\n")

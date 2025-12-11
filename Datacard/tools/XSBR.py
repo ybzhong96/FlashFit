@@ -28,7 +28,10 @@ XSBRMap['0310'] = od()
 XSBRMap['0310']['decay'] = {'mode':'hgg'}
 
 XSBRMap['0310']['GG2HH'] = {'mode':'constant','factor': 2*0.582}
-#XSBRMap['bbgg']['GGHH'] = {'mode':'constant'}                         # ggHH signal production (XS) fb
+#XSBRMap['bbgg']['GGHH'] = {'mode':'constant'}                  # ggHH signal production (XS) fb
+XSBRMap['0310']['GG2HHKL0'] = {'mode':'constant','factor': 0.07575*2*0.582}
+XSBRMap['0310']['GG2HHKL2p45'] = {'mode':'constant','factor': 0.01477*2*0.582}
+XSBRMap['0310']['GG2HHKL5'] = {'mode':'constant','factor': 0.09965*2*0.582}
 XSBRMap['0310']['GG2H'] = {'mode':'constant'}                          # ggH background production (XS) fb
 XSBRMap['0310']['TTH'] = {'mode':'constant'}                           # ttH single-H background production (XS) fb
 XSBRMap['0310']['VBFH'] = {'mode':'constant'}                           # VBF single-H background production (XS) fb
@@ -183,8 +186,7 @@ class dummy_options:
 
 # Functions to get XS/BR
 def getXS(_SM,_MHVar,_mh,_pm):
-  if _pm == "ggHH":
-   # return 1.0 
+  if _pm == "ggHH": 
     return 0.03413
   if _pm == "ggH":
     return 52.23 # 13.6TeV, mH=125GeV, in pb
@@ -199,8 +201,10 @@ def getXS(_SM,_MHVar,_mh,_pm):
   if _pm == "vbfHH":
     return 0.001874
   else:
-    _MHVar.setVal(_mh)
-    return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
+    return 1.0 
+
+   # _MHVar.setVal(_mh)
+   # return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
 def getBR(_SM,_MHVar,_mh,_dm):
   if _dm == "hgg":
     return 1.0
